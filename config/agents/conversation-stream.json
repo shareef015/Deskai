@@ -1,0 +1,1 @@
+{"config_version":"1.0.0","maximum_messages":100,"maximum_message_characters":4000,"maximum_delta_characters":512,"attachments":[],"reconnect_from_cursor":true,"employee_stop_priority":"immediate","partial_response_events":["assistant_delta","assistant_complete"]}

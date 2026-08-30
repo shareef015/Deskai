@@ -1,0 +1,2 @@
+"use client";
+export default function ErrorPage({reset}:{error:Error&{digest?:string};reset:()=>void}){return <main id="main-content" className="shell"><div className="state-panel error-panel"><span aria-hidden="true">!</span><h1>Workspace unavailable</h1><p>The requested view could not be loaded. No support action was executed.</p><button type="button" onClick={reset}>Try again</button></div></main>}

@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "sources": [
+    {"id": "MS-SCANNER-INSTALL", "authority": "Microsoft", "url": "https://support.microsoft.com/en-us/windows/hardware/printer/install-and-use-a-scanner-in-windows", "domains": ["installation", "windows_scan", "test_scan"]},
+    {"id": "MS-WIA-DRIVERS", "authority": "Microsoft", "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/image/windows-image-acquisition-drivers", "domains": ["wia", "drivers", "architecture"]},
+    {"id": "MS-TWAIN-COMPATIBILITY", "authority": "Microsoft", "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/image/twain-compatibility", "domains": ["twain", "wia", "vendor_source"]},
+    {"id": "MS-WIA-TWAIN-LOCKING", "authority": "Microsoft", "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/image/wia-twain-locking", "domains": ["device_lock", "vendor_application"]},
+    {"id": "MS-WIA-TROUBLESHOOTING", "authority": "Microsoft", "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/image/wia-minidriver-troubleshooting", "domains": ["wia_service", "minidriver", "diagnostics"]},
+    {"id": "MS-WIA-SAMPLES", "authority": "Microsoft", "url": "https://learn.microsoft.com/en-us/samples/microsoft/windows-driver-samples/windows-image-acquisition-wia-driver-samples/", "domains": ["wia_2", "production_scanning"]}
+  ]
+}

@@ -1,0 +1,28 @@
+from __future__ import annotations
+import hashlib,json,uuid
+from pathlib import Path
+from typing import Any,Callable
+ROOT=Path(__file__).resolve().parents[2];POLICY=ROOT/"contracts/guided-demo-policy.json";DESTINATION=Path(__file__).with_name("demo-packs.json");NAMESPACE=uuid.UUID("25637371-3898-5851-a6ea-42a8a761be89")
+def digest(v:Any)->str:return hashlib.sha256(json.dumps(v,sort_keys=True,separators=(",",":"),ensure_ascii=False).encode()).hexdigest()
+def build()->dict[str,Any]:
+ policy=json.loads(POLICY.read_text());regression=json.loads((ROOT/"data/synthetic/regression-cases.json").read_text())["cases"]
+ conversations={x["incident_case_id"]:x for x in json.loads((ROOT/"data/synthetic/support-conversations.json").read_text())["conversations"]};authorizations={x["incident_case_id"]:x for x in json.loads((ROOT/"data/synthetic/consent-approval-scenarios.json").read_text())["scenarios"]};remediations={x["incident_case_id"]:x for x in json.loads((ROOT/"data/synthetic/remediation-scenarios.json").read_text())["scenarios"]}
+ unique={r["source_case_id"]:r for r in regression}.values()
+ def pick(predicate:Callable[[dict[str,Any]],bool])->dict[str,Any]:return next(iter(sorted((r for r in unique if predicate(r)),key=lambda r:r["regression_id"])))
+ selections=[
+  ("outlook_resolution","Outlook connection restored","outlook",lambda r:r["domain"]=="outlook" and authorizations[r["source_case_id"]]["outcome"]=="authorized" and remediations[r["source_case_id"]]["outcome"]=="success"),
+  ("printer_resolution","Printer offline to verified output","printer",lambda r:r["domain"]=="printer" and authorizations[r["source_case_id"]]["outcome"]=="authorized" and remediations[r["source_case_id"]]["outcome"]=="success"),
+  ("scanner_resolution","Scanner restored with private test artifact","scanner",lambda r:r["domain"]=="scanner" and authorizations[r["source_case_id"]]["outcome"]=="authorized" and remediations[r["source_case_id"]]["outcome"]=="success"),
+  ("network_resolution","Network repair verified by business function","windows_network",lambda r:r["domain"]=="windows_network" and authorizations[r["source_case_id"]]["outcome"]=="authorized" and remediations[r["source_case_id"]]["outcome"]=="success"),
+  ("consent_declined","Diagnostic consent declined","consent",lambda r:authorizations[r["source_case_id"]]["outcome"]=="consent_declined"),
+  ("approval_rejected","Remediation approval rejected","approval",lambda r:conversations[r["source_case_id"]]["decisions"]["remediation_approval"]=="rejected"),
+  ("rollback_success","Partial remediation rolled back","rollback",lambda r:remediations[r["source_case_id"]]["outcome"]=="partial_rollback_success"),
+  ("rollback_failure","Rollback failure escalated safely","escalation",lambda r:remediations[r["source_case_id"]]["outcome"]=="partial_rollback_failed")]
+ packs=[]
+ for order,(slug,title,theme,predicate) in enumerate(selections):
+  record=pick(predicate);case_id=record["source_case_id"];conversation=conversations[case_id];authorization=authorizations[case_id];remediation=remediations[case_id]
+  steps=[{"id":"greeting","title":"Greet and intake","narration":"Show the time-aware greeting, capture the symptom, and identify the registered synthetic endpoint.","checkpoint":"intake_visible"},{"id":"consent","title":"Request scoped diagnostics","narration":"Explain read-only scope and request incident-specific diagnostic consent.","checkpoint":"consent_decision_visible"},{"id":"evidence","title":"Inspect bounded evidence","narration":"Present redacted typed telemetry and the evidence-linked root-cause hypothesis.","checkpoint":"evidence_lineage_visible"},{"id":"approval","title":"Apply the authority boundary","narration":"Separate diagnostic consent from the action-specific risk and approval decision.","checkpoint":"approval_decision_visible"},{"id":"execution","title":"Run the synthetic outcome","narration":"Replay the typed remediation, failure, compensation, or no-execution result without contacting a device.","checkpoint":"execution_result_visible"},{"id":"verification","title":"Verify the original function","narration":"Show domain verification, rollback evidence when applicable, and employee feedback.","checkpoint":"verification_visible"},{"id":"closure","title":"Resolve or escalate","narration":"Close only with required confirmation; otherwise preserve evidence and escalate.","checkpoint":"terminal_state_visible"}]
+  packs.append({"pack_id":str(uuid.uuid5(NAMESPACE,f"{policy['seed']}:{slug}:{case_id}")),"slug":slug,"title":title,"theme":theme,"order":order,"estimated_minutes":4,"synthetic_only":True,"source":{"regression_id":record["regression_id"],"incident_case_id":case_id,"incident_id":record["incident_id"],"endpoint_id":record["endpoint_id"],"conversation_id":conversation["conversation_id"],"authorization_scenario_id":authorization["scenario_id"],"remediation_scenario_id":remediation["scenario_id"]},"expected":{"consent_outcome":authorization["outcome"],"conversation_terminal_state":conversation["terminal_state"],"execution_outcome":remediation["outcome"],"execution_terminal_state":remediation["final_state"]["terminal_state"],"reset_state":"ready"},"steps":steps,"replay":{"generator_version":"1.0.0","master_seed":policy["seed"],"order":order,"source_digest":record["source_digest"]}})
+ payload={"schema_version":"1.0.0","synthetic_only":True,"tenant_id":policy["tenant_id"],"seed":policy["seed"],"pack_count":len(packs),"packs":packs};payload["dataset_digest"]=digest(payload);return payload
+def canonical_bytes()->bytes:return (json.dumps(build(),sort_keys=True,separators=(",",":"),ensure_ascii=False)+"\n").encode()
+if __name__=="__main__":DESTINATION.write_bytes(canonical_bytes());print(DESTINATION)

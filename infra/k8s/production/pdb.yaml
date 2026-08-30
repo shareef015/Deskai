@@ -1,0 +1,32 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: deskpilot-api
+  namespace: deskpilot-production
+spec:
+  minAvailable: 3
+  selector:
+    matchLabels:
+      app: deskpilot-api
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: deskpilot-frontend
+  namespace: deskpilot-production
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: deskpilot-frontend
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: deskpilot-worker
+  namespace: deskpilot-production
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: deskpilot-worker

@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0.0",
+  "deployment_profiles": {
+    "private_single_server_pilot": {
+      "device_limit": 10,
+      "availability_class": "single_node_non_ha",
+      "runtime": "containerized",
+      "required_off_host_backup": true
+    },
+    "private_high_availability": {
+      "device_limit": "license_and_capacity_defined",
+      "availability_class": "multi_node",
+      "required": ["load_balancer", "replicated_application_services", "managed_or_replicated_postgresql", "redis_ha", "off_host_object_storage"]
+    }
+  },
+  "trust_zones": ["employee_browser", "private_application_zone", "private_data_zone", "endpoint_control_zone", "managed_windows_endpoint", "explicit_external_provider"],
+  "components": {
+    "web": {"technology": "nextjs_typescript", "zone": "private_application_zone", "responsibilities": ["employee_portal", "engineer_workbench", "approval_ui", "sse_client"]},
+    "api": {"technology": "python_fastapi", "zone": "private_application_zone", "responsibilities": ["authentication", "authorization", "tenant_context", "incident_control", "consent", "approvals", "audit_api", "sse"]},
+    "ai_service": {"technology": "python_langgraph_langchain", "zone": "private_application_zone", "responsibilities": ["conversation", "orchestration", "specialist_subgraphs", "evidence_fusion", "recommendations"], "authority": "proposal_only"},
+    "rag_service": {"technology": "python_hybrid_retrieval", "zone": "private_application_zone", "responsibilities": ["ingestion", "hybrid_retrieval", "reranking", "citation_validation", "evaluation"]},
+    "mcp_gateway": {"technology": "python_typed_tools", "zone": "endpoint_control_zone", "responsibilities": ["capability_validation", "argument_validation", "policy_enforcement", "dispatch", "result_verification"]},
+    "worker": {"technology": "python_background_worker", "zone": "private_application_zone", "responsibilities": ["ingestion_jobs", "evaluation_jobs", "scheduled_jobs", "cleanup"]},
+    "postgresql": {"technology": "postgresql", "zone": "private_data_zone", "responsibilities": ["durable_system_of_record", "tenant_data", "incidents", "checkpoints", "audit"]},
+    "redis": {"technology": "redis", "zone": "private_data_zone", "responsibilities": ["cache", "ephemeral_session_state", "distributed_locks", "rate_limits"]},
+    "endpoint_agent": {"technology": "signed_windows_service", "zone": "managed_windows_endpoint", "responsibilities": ["machine_identity", "heartbeat", "typed_diagnostics", "typed_remediation", "signed_results", "local_policy_enforcement"]},
+    "telemetry": {"technology": "opentelemetry_prometheus_grafana_langsmith_adapter", "zone": "private_application_zone", "responsibilities": ["traces", "metrics", "logs", "ai_evaluation", "cost_monitoring"]}
+  },
+  "prohibited_connections": [
+    "browser_to_postgresql",
+    "browser_to_endpoint_agent",
+    "ai_service_direct_to_endpoint_agent",
+    "rag_document_to_mcp_gateway",
+    "external_provider_direct_to_private_data_zone",
+    "endpoint_agent_to_other_endpoint_agent"
+  ],
+  "required_flows": [
+    {"from": "web", "to": "api", "protocol": "https_sse", "control": "oidc_session_csrf_cors"},
+    {"from": "api", "to": "ai_service", "protocol": "authenticated_internal_http", "control": "service_identity_tenant_context"},
+    {"from": "ai_service", "to": "rag_service", "protocol": "authenticated_internal_http", "control": "tenant_and_permission_filters"},
+    {"from": "ai_service", "to": "api", "protocol": "typed_tool_proposal", "control": "no_execution_authority"},
+    {"from": "api", "to": "mcp_gateway", "protocol": "authenticated_internal_http", "control": "authorization_and_capability_token"},
+    {"from": "mcp_gateway", "to": "endpoint_agent", "protocol": "mutual_tls", "control": "machine_identity_capability_scope_replay_protection"},
+    {"from": "api", "to": "postgresql", "protocol": "tls_database", "control": "tenant_context_transactions"},
+    {"from": "services", "to": "telemetry", "protocol": "otlp", "control": "redaction_sampling_tenant_tags"}
+  ],
+  "data_authority": {
+    "durable_truth": "postgresql",
+    "ephemeral_acceleration": "redis",
+    "agent_checkpoint": "postgresql",
+    "endpoint_truth": "signed_fresh_endpoint_evidence",
+    "knowledge_truth": "versioned_approved_corpus",
+    "authorization_truth": "deterministic_policy_and_authenticated_human_decision"
+  },
+  "architecture_invariants": [
+    "all_requests_have_tenant_context",
+    "ai_has_no_direct_endpoint_execution_path",
+    "endpoint_actions_require_valid_capability",
+    "audit_is_append_only",
+    "redis_is_not_durable_truth",
+    "external_integrations_are_disabled_by_default",
+    "single_server_profile_is_not_high_availability"
+  ]
+}

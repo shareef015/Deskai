@@ -1,0 +1,48 @@
+name: LLMOps Quality Certification
+
+on:
+  pull_request:
+    paths:
+      - "backend/src/deskpilot_llmops/**"
+      - "backend/src/deskpilot_ai_pipeline/**"
+      - "backend/evals/**"
+      - "backend/tests/test_quality_*.py"
+      - "observability/**"
+      - "frontend/src/contracts/observability.contract.ts"
+      - "frontend/src/lib/telemetry/**"
+      - ".github/workflows/llmops-certification.yml"
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality-certification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile backend
+        run: python -m compileall -q backend/src backend/tests backend/scripts
+      - name: Run cumulative deterministic backend suite
+        env:
+          PYTHONPATH: backend/src
+        run: python -m unittest discover -s backend/tests -p 'test_*.py' -v
+      - name: Run Quality golden/release certification
+        env:
+          PYTHONPATH: backend/src
+        run: python backend/scripts/run_quality_certification.py
+      - name: Require a passing release certificate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('backend/evals/QUALITY_CERTIFICATION_REPORT.json').read_text())
+          assert report['release_certificate']['passed'] is True
+          assert report['attack_case_passed'] == report['attack_case_count']
+          assert all(case['passed'] for case in report['cases'])
+          PY

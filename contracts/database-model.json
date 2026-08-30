@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "database": "postgresql",
+  "minimum_version": "16",
+  "authoritative_time": "timestamptz_utc",
+  "identifier": "uuid_v7_application_generated",
+  "tenant_isolation": {
+    "tenant_id_required": true,
+    "composite_tenant_foreign_keys_required": true,
+    "cross_tenant_reference_prohibited": true,
+    "row_level_security_enforcement_stage": "tenant-isolation-control-plane"
+  },
+  "data_classes": {
+    "configuration": ["tenants", "users", "devices"],
+    "operational": ["incidents", "incident_events", "evidence_items"],
+    "authorization": ["consent_decisions", "approval_decisions"],
+    "change": ["remediation_plans", "remediation_executions", "verification_results"],
+    "ai_runtime": ["ai_runs", "ai_checkpoints"],
+    "audit": ["audit_events"]
+  },
+  "invariants": [
+    "tenant_id_is_immutable",
+    "incident_history_is_append_only",
+    "audit_events_are_append_only",
+    "authorization_is_separate_from_ai_recommendation",
+    "remediation_requires_pre_state_and_idempotency_key",
+    "closure_requires_technical_and_employee_confirmation",
+    "ai_checkpoint_never_grants_authority"
+  ],
+  "sensitive_data": {
+    "secrets_in_database_prohibited": true,
+    "credential_material_prohibited": true,
+    "raw_unbounded_telemetry_prohibited": true,
+    "evidence_payloads_use_object_store_references": true
+  }
+}

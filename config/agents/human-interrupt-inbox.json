@@ -1,0 +1,1 @@
+{"config_version":"1.0.0","component":"human_interrupt_inbox","maximum_pending_per_actor":50,"default_expiry_minutes":{"diagnostic_consent":15,"remediation_approval":30,"employee_confirmation":20},"queue_sort":["expires_at","interrupt_id"],"review_packet_mode":"privacy_safe_references","decision_idempotency":"required","sse_cursor":"monotonic"}

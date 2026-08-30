@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "seed": 20260826,
+  "scenarios": [
+    {"id": "SYN-SCN-001", "device": "WIN11-04", "incident": "SCAN-WIA-001", "root_cause": "wia_service_stopped", "expected_risk": "medium", "expected_outcome": "approved_wia_restart_and_test_scan"},
+    {"id": "SYN-SCN-002", "device": "WIN10-05", "incident": "SCAN-POWER-001", "root_cause": "feeder_failure", "expected_risk": "read_only", "expected_outcome": "physical_service_escalation"},
+    {"id": "SYN-SCN-003", "device": "WIN11-03", "incident": "SCAN-NETWORK-001", "root_cause": "stale_ip_address", "expected_risk": "medium", "expected_outcome": "approved_address_update_and_test_scan"},
+    {"id": "SYN-SCN-004", "device": "WIN10-01", "incident": "SCAN-DISCOVERY-001", "root_cause": "driver_missing", "expected_risk": "high", "expected_outcome": "privileged_signed_driver_install"},
+    {"id": "SYN-SCN-005", "device": "WIN11-01", "incident": "SCAN-DRIVER-001", "root_cause": "x86_x64_mismatch", "expected_risk": "high", "expected_outcome": "compatible_driver_and_application_pair"},
+    {"id": "SYN-SCN-006", "device": "WIN10-02", "incident": "SCAN-LOCK-001", "root_cause": "vendor_app_holds_device_lock", "expected_risk": "low", "expected_outcome": "user_approved_app_close_and_test_scan"},
+    {"id": "SYN-SCN-007", "device": "WIN11-02", "incident": "SCAN-APP-001", "root_cause": "wrong_data_source", "expected_risk": "low", "expected_outcome": "source_corrected_and_business_app_verified"},
+    {"id": "SYN-SCN-008", "device": "WIN10-03", "incident": "SCAN-PERMISSION-001", "root_cause": "destination_permission_missing", "expected_risk": "high", "expected_outcome": "resource_owner_escalation"},
+    {"id": "SYN-SCN-009", "device": "WIN11-05", "incident": "SCAN-MFP-001", "root_cause": "scan_component_missing", "expected_risk": "medium", "expected_outcome": "scan_component_added_without_print_regression"},
+    {"id": "SYN-SCN-010", "device": "WIN10-04", "incident": "SCAN-QUALITY-001", "root_cause": "page_size_mismatch", "expected_risk": "low", "expected_outcome": "scan_profile_corrected_and_quality_confirmed"}
+  ]
+}

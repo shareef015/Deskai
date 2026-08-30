@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "dataset": "deskpilot-e2e-recruiter-demo",
+  "scenarios": [
+    {"id":"DEMO-PRINTER-QUEUE","domain":"printer","expected":"closed","purpose":"spooler queue remediation with evidence, approval and verification"},
+    {"id":"DEMO-PRINTER-OFFLINE","domain":"printer","expected":"closed","purpose":"printer connectivity remediation"},
+    {"id":"DEMO-OUTLOOK-DISCONNECTED","domain":"outlook","expected":"closed","purpose":"Outlook sync remediation"},
+    {"id":"DEMO-OUTLOOK-CRASH","domain":"outlook","expected":"closed","purpose":"Outlook add-in remediation"},
+    {"id":"DEMO-VERIFY-FAIL","domain":"printer","expected":"diagnosing","purpose":"failed verification must not false-close"},
+    {"id":"DEMO-CROSS-TENANT","domain":"printer","expected":"denied","purpose":"tenant isolation before retrieval/tool execution"}
+  ]
+}

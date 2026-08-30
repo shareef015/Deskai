@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "seed": 20260826,
+  "scenarios": [
+    {"id": "SYN-NET-001", "device": "WIN11-05", "incident": "WIN-NET-DNS-001", "root_cause": "stale_dns_cache", "expected_risk": "low", "expected_outcome": "cache_flushed_name_resolution_and_outlook_verified"},
+    {"id": "SYN-NET-002", "device": "WIN10-01", "incident": "WIN-NET-VPN-001", "root_cause": "profile_or_protocol_mismatch", "expected_risk": "high", "expected_outcome": "network_administrator_escalation"},
+    {"id": "SYN-NET-003", "device": "WIN11-01", "incident": "WIN-NET-WIFI-001", "root_cause": "wrong_network", "expected_risk": "low", "expected_outcome": "approved_ssid_connected_and_service_verified"},
+    {"id": "SYN-NET-004", "device": "WIN10-02", "incident": "WIN-NET-DHCP-001", "root_cause": "stale_lease", "expected_risk": "low", "expected_outcome": "lease_renewed_and_printer_reachable"},
+    {"id": "SYN-NET-005", "device": "WIN11-02", "incident": "WIN-NET-PROXY-001", "root_cause": "user_winhttp_mismatch", "expected_risk": "medium", "expected_outcome": "approved_proxy_snapshot_restored"},
+    {"id": "SYN-NET-006", "device": "WIN10-03", "incident": "WIN-NET-ADAPTER-001", "root_cause": "adapter_disabled", "expected_risk": "medium", "expected_outcome": "adapter_enabled_and_business_function_verified"},
+    {"id": "SYN-NET-007", "device": "WIN11-03", "incident": "WIN-NET-ROUTE-001", "root_cause": "vpn_route_conflict", "expected_risk": "high", "expected_outcome": "network_administrator_escalation"},
+    {"id": "SYN-NET-008", "device": "WIN10-04", "incident": "WIN-SVC-001", "root_cause": "transient_service_failure", "expected_risk": "medium", "expected_outcome": "allowlisted_service_restarted_and_stability_verified"},
+    {"id": "SYN-NET-009", "device": "WIN11-04", "incident": "WIN-PERF-001", "root_cause": "disk_pressure", "expected_risk": "medium", "expected_outcome": "approved_temporary_cleanup_and_outlook_verified"},
+    {"id": "SYN-NET-010", "device": "WIN10-05", "incident": "WIN-UPDATE-001", "root_cause": "unsupported_build", "expected_risk": "high", "expected_outcome": "restricted_support_and_migration_escalation"}
+  ]
+}

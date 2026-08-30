@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0.0",
+  "authority": "deterministic_configuration_loader",
+  "environments": ["development", "test", "production"],
+  "precedence_low_to_high": [
+    "compiled_safe_defaults",
+    "environment_profile",
+    "deployment_environment",
+    "approved_secret_provider"
+  ],
+  "rules": [
+    "unknown_keys_are_rejected",
+    "production_has_no_implicit_secrets",
+    "secret_values_are_never_committed",
+    "environment_is_explicit_and_immutable_after_startup",
+    "effective_configuration_is_validated_before_readiness",
+    "effective_configuration_has_a_redacted_sha256_fingerprint",
+    "customer_data_stays_in_private_environment_by_default",
+    "non_windows_endpoint_enrollment_is_rejected"
+  ],
+  "secret_keys": [
+    "database_url",
+    "redis_url",
+    "oidc_client_secret",
+    "endpoint_ca_private_key",
+    "model_provider_api_key"
+  ],
+  "secret_reference_schemes": ["env://", "file://", "vault://"],
+  "production_required": [
+    "database_url_ref",
+    "redis_url_ref",
+    "oidc_issuer",
+    "oidc_audience",
+    "endpoint_ca_certificate_ref"
+  ],
+  "production_invariants": {
+    "debug": false,
+    "api_docs_enabled": false,
+    "synthetic_mode": false,
+    "external_data_transfer": false,
+    "managed_endpoint_operating_systems": ["windows_10", "windows_11"],
+    "max_managed_endpoints": 10
+  },
+  "reload_policy": {
+    "automatic_runtime_reload": false,
+    "restart_required": true,
+    "audit_event": "configuration_release_activated"
+  }
+}

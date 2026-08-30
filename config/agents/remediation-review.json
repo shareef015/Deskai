@@ -1,0 +1,1 @@
+{"config_version":"1.0.0","approval_roles":["approver","change_manager"],"requester_roles":["service_desk_engineer","operator"],"medium_high_rollback_required":true,"decision_idempotency":"required","partial_failure_routes":["rollback","human_recovery"],"exact_plan_fingerprint_required":true}

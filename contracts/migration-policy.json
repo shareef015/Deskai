@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "tool": "alembic",
+  "version_table": "alembic_version",
+  "transactional_ddl_required": true,
+  "single_writer": true,
+  "forward_only_production_default": true,
+  "downgrade_required_for_preproduction": true,
+  "baseline_schema_sha256": "a067b6d721dfee8730e63d9674289ec9822a6107ae54f3ff990b99bf593a9f82",
+  "deployment_controls": [
+    "backup_verified_before_migration",
+    "advisory_lock_required",
+    "one_revision_at_a_time",
+    "schema_drift_check_required",
+    "upgrade_then_downgrade_then_upgrade_test_required",
+    "destructive_change_requires_expand_contract",
+    "application_compatibility_window_required"
+  ],
+  "prohibited": [
+    "runtime_create_all",
+    "automatic_production_downgrade",
+    "credential_in_alembic_ini",
+    "mutable_baseline_without_new_revision"
+  ]
+}

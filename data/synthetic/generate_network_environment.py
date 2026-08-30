@@ -1,0 +1,17 @@
+from __future__ import annotations
+import json
+from pathlib import Path
+
+ROOT=Path(__file__).resolve().parents[2]
+ENDPOINTS=ROOT/"data/synthetic/endpoints.json"
+DESTINATION=Path(__file__).with_name("network-environment.json")
+SUBNETS={"loc-hq":("10.44.10.0/24","10.44.10.1","10.44.10"),"loc-branch":("10.44.20.0/24","10.44.20.1","10.44.20"),"loc-warehouse":("10.44.30.0/24","10.44.30.1","10.44.30")}
+
+def build()->dict:
+    endpoints=json.loads(ENDPOINTS.read_text(encoding="utf-8"))["endpoints"]; endpoint_states=[]
+    for index,endpoint in enumerate(endpoints):
+        subnet,gateway,prefix=SUBNETS[endpoint["location_id"]]; wifi=index%2==1
+        endpoint_states.append({"endpoint_id":endpoint["id"],"hostname":endpoint["hostname"],"tenant_id":endpoint["tenant_id"],"adapter":{"id":f"nic-{index+1:02d}","type":"wifi" if wifi else "ethernet","enabled":True,"link":"connected","dhcp":True,"address":f"{prefix}.{50+index}","prefix_length":24,"gateway":gateway,"metric":25 if wifi else 10},"wifi":{"ssid":"Northstar-Corp","authentication":"certificate","signal_percent":78-index,"profile_managed":True,"key_material_present":False} if wifi else None,"dns":{"servers":["10.44.0.10","10.44.0.11"],"suffix":"corp.demo.invalid","registration":True,"cache_state":"healthy"},"proxy":{"mode":"pac","pac_url":"https://proxy.demo.invalid/corporate.pac","winhttp_aligned":True,"credentials_present":False},"vpn":{"profile":"Northstar-Private","protocol":"ikev2","gateway":"vpn.demo.invalid","connected":index in {4,9},"routes":["10.80.0.0/16"],"dns_suffixes":["private.demo.invalid"],"secret_material_present":False},"health_baseline":{"link":True,"dhcp":True,"gateway":True,"dns":True,"proxy":True,"vpn_profile":True,"internet_target":True,"private_target":True},"active_faults":[]})
+    return {"schema_version":"1.0.0","synthetic_only":True,"seed":46001,"tenant_id":"tenant-demo-kw","topology":{"subnets":[{"location_id":k,"cidr":v[0],"gateway":v[1],"dhcp":True,"vlan":100+i} for i,(k,v) in enumerate(SUBNETS.items())],"dns_servers":[{"name":"dns-01","address":"10.44.0.10"},{"name":"dns-02","address":"10.44.0.11"}],"dns_records":{"deskpilot.private.demo.invalid":"10.80.10.20","print-01.corp.demo.invalid":"10.44.10.40","proxy.demo.invalid":"10.44.0.30","vpn.demo.invalid":"10.44.0.40"},"proxy":{"name":"proxy-01","address":"10.44.0.30","port":8080},"vpn":{"name":"vpn-gw-01","private_subnet":"10.80.0.0/16"},"wifi":[{"ssid":"Northstar-Corp","locations":["loc-hq","loc-branch"],"authentication":"certificate"}]},"endpoint_states":endpoint_states,"fault_catalog":[{"type":"adapter_disabled","path":"adapter.enabled","fault_value":False,"restore_value":True},{"type":"apipa_address","path":"adapter.address","fault_value":"169.254.44.10","restore_from_baseline":True},{"type":"dns_stale_record","path":"dns.cache_state","fault_value":"stale","restore_value":"healthy"},{"type":"proxy_mismatch","path":"proxy.winhttp_aligned","fault_value":False,"restore_value":True},{"type":"vpn_route_conflict","path":"vpn.routes","fault_value":["0.0.0.0/0"],"restore_from_baseline":True},{"type":"wifi_wrong_ssid","path":"wifi.ssid","fault_value":"Northstar-Guest","restore_value":"Northstar-Corp"},{"type":"gateway_unreachable","path":"health_baseline.gateway","fault_value":False,"restore_value":True}]}
+def canonical_bytes()->bytes: return (json.dumps(build(),sort_keys=True,separators=(",",":"),ensure_ascii=False)+"\n").encode()
+if __name__=="__main__": DESTINATION.write_bytes(canonical_bytes()); print(DESTINATION)

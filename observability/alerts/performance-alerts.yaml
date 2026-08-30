@@ -1,0 +1,28 @@
+groups:
+  - name: deskpilot-performance
+    rules:
+      - alert: DeskPilotApiP95LatencyHigh
+        expr: histogram_quantile(0.95, sum by (le) (rate(deskpilot_api_request_duration_seconds_bucket[5m]))) > 0.25
+        for: 10m
+        labels: {severity: warning}
+        annotations: {summary: "DeskPilot API p95 latency exceeds 250 ms"}
+      - alert: DeskPilotQueueAgeHigh
+        expr: deskpilot_queue_oldest_age_seconds > 30
+        for: 5m
+        labels: {severity: critical}
+        annotations: {summary: "DeskPilot queue oldest item exceeds 30 seconds"}
+      - alert: DeskPilotPostgresPoolPressure
+        expr: deskpilot_postgres_pool_utilization > 0.80
+        for: 10m
+        labels: {severity: warning}
+        annotations: {summary: "DeskPilot PostgreSQL pool pressure exceeds governed envelope"}
+      - alert: DeskPilotMcpWorkerSaturation
+        expr: deskpilot_mcp_worker_utilization > 0.85
+        for: 5m
+        labels: {severity: warning}
+        annotations: {summary: "DeskPilot MCP workers are saturated"}
+      - alert: DeskPilotTenantFairnessRegression
+        expr: deskpilot_tenant_jain_fairness_index < 0.95
+        for: 15m
+        labels: {severity: warning}
+        annotations: {summary: "Tenant fairness index is below target"}

@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "header": "Idempotency-Key",
+  "required_for": ["POST", "PATCH"],
+  "scope": ["tenant_id", "operation", "idempotency_key"],
+  "key": {"minimum_length": 16, "maximum_length": 128, "allowed_pattern": "^[A-Za-z0-9._:-]+$", "raw_key_in_logs_prohibited": true},
+  "fingerprint": {"algorithm": "sha256", "inputs": ["method", "normalized_route", "canonical_json_body", "relevant_preconditions"], "same_key_different_fingerprint_status": 409},
+  "execution": {"database_record_authoritative": true, "owner_token_random": true, "lease_seconds": 60, "same_transaction_as_mutation": true, "only_owner_may_complete": true},
+  "replay": {"response_encrypted": true, "status_headers_and_body_preserved": true, "secret_headers_excluded": true, "replay_header": "Idempotency-Replayed", "retention_hours": 24},
+  "failure": {"in_progress_status": 409, "retry_after_seconds": 2, "failed_request_may_retry_after_lease": true, "cross_tenant_replay_prohibited": true}
+}

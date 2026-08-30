@@ -1,0 +1,1 @@
+{"config_version":"1.0.0","environments":["synthetic","staging","production"],"canary_minimum_percent":1,"canary_maximum_percent":100,"approval_role":"release_approver","deployment_role":"release_manager","emergency_role":"emergency_controller","environment_mix_allowed":false}

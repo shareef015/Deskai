@@ -1,0 +1,10 @@
+title = "DeskPilot secret detection"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Synthetic test fixtures only"
+paths = ['''^data/synthetic/''']
+regexTarget = "match"
+regexes = ['''SYNTHETIC_[A-Z0-9_]+''']

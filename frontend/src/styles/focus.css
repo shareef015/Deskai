@@ -1,0 +1,21 @@
+:focus-visible {
+  outline: var(--focus-width) solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: fixed;
+  inset-inline-start: 1rem;
+  top: 0.5rem;
+  transform: translateY(-200%);
+  z-index: 9999;
+  background: var(--surface-elevated);
+  color: var(--foreground);
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}

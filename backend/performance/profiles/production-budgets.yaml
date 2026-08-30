@@ -1,0 +1,33 @@
+version: 1
+kind: deskpilot-performance-budget
+scope: performance
+notes:
+  - These are release guardrails, not a claim about untested production infrastructure.
+stages:
+  api: {p95_ms: 250, p99_ms: 500, error_rate_max: 0.005}
+  rag: {p95_ms: 700, p99_ms: 1200, error_rate_max: 0.01}
+  langgraph: {p95_ms: 300, p99_ms: 650, error_rate_max: 0.005}
+  llm: {p95_ms: 2500, p99_ms: 4500, error_rate_max: 0.02}
+  mcp: {p95_ms: 800, p99_ms: 1500, error_rate_max: 0.01}
+  stream_publish: {p95_ms: 120, p99_ms: 250, error_rate_max: 0.005}
+  end_to_end: {p95_ms: 4200, p99_ms: 6500, error_rate_max: 0.02}
+resources:
+  cpu_utilization_max: 0.85
+  memory_utilization_max: 0.85
+  postgres_pool_utilization_max: 0.80
+  redis_pool_utilization_max: 0.80
+  mcp_worker_utilization_max: 0.85
+queue:
+  oldest_age_seconds_max: 30
+fairness:
+  jain_index_min: 0.95
+cache:
+  hit_ratio_target: 0.50
+synthetic_envelope:
+  api_rps: 120
+  concurrent_incidents: 250
+  sse_connections: 2000
+  websocket_connections: 1000
+  rag_qps: 60
+  agent_concurrency: 80
+  mcp_concurrency: 40

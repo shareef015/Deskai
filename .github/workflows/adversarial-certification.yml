@@ -1,0 +1,42 @@
+name: adversarial-certification
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  security-redteam:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run cumulative backend security tests
+        run: PYTHONPATH=backend/src python -m unittest discover -s backend/tests -p 'test_*.py' -v
+      - name: Run deterministic adversarial certification
+        run: PYTHONPATH=backend/src python backend/scripts/run_security_certification.py
+      - name: Reject floating dependency versions
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, 'backend/src')
+          from deskpilot_redteam.supply_chain import SupplyChainScanner
+          report = SupplyChainScanner().scan(Path('.'))
+          if report.blocking:
+              for finding in report.blocking:
+                  print(f'{finding.severity}: {finding.code}: {finding.detail}')
+              raise SystemExit(1)
+          for finding in report.findings:
+              print(f'warning: {finding.code}: {finding.detail}')
+          PY
+      - name: Require generated npm lockfile in connected CI
+        run: test -f frontend/package-lock.json
+      - name: Frontend production dependency audit
+        working-directory: frontend
+        run: npm audit --omit=dev --audit-level=high

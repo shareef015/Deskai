@@ -1,0 +1,1 @@
+{"version":"1.0.0","live_identity_provider":"oidc","persona_switching":{"live":false,"synthetic":true,"required_role":"demo_operator"},"modes":["live","synthetic"],"session_checks":["expiry","revocation","tenant","role","mode"],"demo_credentials_embedded":false}

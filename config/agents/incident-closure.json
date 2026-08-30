@@ -1,0 +1,1 @@
+{"config_version":"1.0.0","closure_requires":["all_technical_checks","employee_fixed_confirmation","resolution_summary","evidence_references"],"knowledge_publication":"separate_human_review","reopen_reasons":["regression","employee_reports_recurrence","verification_defect","new_related_symptom"],"audit_export_roles":["operator","auditor","service_desk_engineer"]}

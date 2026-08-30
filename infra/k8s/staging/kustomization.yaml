@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - api-deployment.yaml
+  - frontend-deployment.yaml
+  - worker-deployment.yaml
+  - ingress.yaml
+  - networkpolicy.yaml
+  - hpa.yaml
+  - pdb.yaml
+  - migration-job.yaml
+  - smoke-test-job.yaml
+commonLabels:
+  app.kubernetes.io/part-of: deskpilot-ai
+  app.kubernetes.io/environment: staging

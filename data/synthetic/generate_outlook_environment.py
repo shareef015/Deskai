@@ -1,0 +1,20 @@
+from __future__ import annotations
+import json
+from pathlib import Path
+
+ROOT=Path(__file__).resolve().parents[2]
+ENDPOINTS=ROOT/"data/synthetic/endpoints.json"; IDENTITIES=ROOT/"data/synthetic/identities.json"
+DESTINATION=Path(__file__).with_name("outlook-environment.json")
+
+def build()->dict:
+    endpoints=json.loads(ENDPOINTS.read_text(encoding="utf-8"))["endpoints"]
+    identities={i["persona_id"]:i for i in json.loads(IDENTITIES.read_text(encoding="utf-8"))["identities"]}
+    mailboxes=[]; clients=[]
+    for index,endpoint in enumerate(endpoints):
+        identity=identities[endpoint["primary_user_id"]]; address=identity["preferred_username"]
+        mailboxes.append({"id":f"mbx-{identity['persona_id']}","owner_id":identity["persona_id"],"primary_address":address,"type":"user","licensed":True,"quota_gb":50,"used_gb":5+index,"server_state":"healthy","content_included":False})
+        classic=endpoint["installed_software"]["outlook_client"]=="classic"
+        clients.append({"endpoint_id":endpoint["id"],"hostname":endpoint["hostname"],"tenant_id":endpoint["tenant_id"],"mailbox_id":f"mbx-{identity['persona_id']}","client":{"variant":"classic" if classic else "new","process":"outlook.exe" if classic else "olk.exe","channel":"current_enterprise" if classic else "service_delivered","version":f"16.0.{18000+index}.10000" if classic else f"1.2026.{800+index}"},"profile":{"kind":"mapi_profile" if classic else "app_account","name":"Northstar Mail","configured":True,"default":True,"state":"healthy"},"cache":{"kind":"ost" if classic else "app_cache","metadata_only":True,"size_mb":1200+index*90,"last_sync_sequence":10000+index,"state":"healthy"},"authentication":{"method":"modern_auth","account":address,"status":"authenticated","token_material_present":False,"mfa_secret_present":False},"connectivity":{"work_offline":False,"exchange_endpoint":"outlook.office.demo.invalid","status":"connected"},"synchronization":{"status":"current","last_success_offset_seconds":30+index,"pending_items":0,"send_receive":"healthy"},"search":{"provider":"windows_search" if classic else "service_search","indexed_percent":100,"status":"healthy"},"add_ins":[{"id":"teams-meeting","name":"Synthetic Teams Meeting Add-in","version":"1.0.0","type":"com" if classic else "web","enabled":True,"load_state":"healthy"},{"id":"crm-helper","name":"Synthetic CRM Helper","version":"2.3.0","type":"com" if classic else "web","enabled":index%3!=0,"load_state":"healthy"}],"health_baseline":{"client_starts":True,"mailbox_loads":True,"connected":True,"authenticated":True,"sync_advances":True,"send_receive":True},"active_faults":[]})
+    return {"schema_version":"1.0.0","synthetic_only":True,"seed":47001,"tenant_id":"tenant-demo-kw","microsoft_365":{"tenant_name":"northstar-demo.onmicrosoft.invalid","exchange_online":{"service_health":"healthy","region":"synthetic-kw","incident_id":None},"identity_health":"healthy","connectivity_targets":["login.identity.demo.invalid","outlook.office.demo.invalid"]},"mailboxes":mailboxes,"clients":clients,"fault_catalog":[{"type":"work_offline_enabled","path":"connectivity.work_offline","fault_value":True,"restore_value":False},{"type":"authentication_loop","path":"authentication.status","fault_value":"prompt_loop","restore_value":"authenticated"},{"type":"ost_corruption","path":"cache.state","fault_value":"corrupt","restore_value":"healthy"},{"type":"addin_crash","path":"add_ins.0.load_state","fault_value":"crashing","restore_value":"healthy"},{"type":"sync_stalled","path":"synchronization.status","fault_value":"stalled","restore_value":"current"},{"type":"profile_corruption","path":"profile.state","fault_value":"corrupt","restore_value":"healthy"},{"type":"search_index_incomplete","path":"search.status","fault_value":"incomplete","restore_value":"healthy"},{"type":"service_degradation","path":"microsoft_365.exchange_online.service_health","fault_value":"degraded","restore_value":"healthy"}]}
+def canonical_bytes()->bytes: return (json.dumps(build(),sort_keys=True,separators=(",",":"),ensure_ascii=False)+"\n").encode()
+if __name__=="__main__": DESTINATION.write_bytes(canonical_bytes()); print(DESTINATION)

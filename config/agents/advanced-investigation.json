@@ -1,0 +1,1 @@
+{"version":"1.0.0","allowed_roles":["service_desk_engineer","advanced_investigator","operations_viewer"],"maximum_nodes":80,"maximum_edges":160,"tabs":["Evidence graph","Retrieval evidence","Agent trace","Specialist diagnostics"],"mutation_tools_allowed":false}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "attempted_url": "http://127.0.0.1:3000/conversation-workspace",
+  "browser": "managed Chrome",
+  "result": "blocked",
+  "reason_code": "preview_route_unavailable",
+  "observed_error": "net::ERR_BLOCKED_BY_CLIENT",
+  "bridge_probe": {
+    "url": "http://host.docker.internal:3000/conversation-workspace",
+    "result": "502 Bad Gateway"
+  },
+  "screenshots_created": false,
+  "passing_manifest_created": false,
+  "synthetic_only": true
+}

@@ -1,0 +1,6 @@
+# Names only: never place credentials or private keys in this file.
+DESKPILOT_ENVIRONMENT=development
+DESKPILOT_CONFIG_PROFILE=config/environments/development.json
+DESKPILOT_DATABASE_URL=postgresql://replace-at-deployment
+DESKPILOT_REDIS_URL=redis://replace-at-deployment
+DESKPILOT_OIDC_CLIENT_SECRET=replace-at-deployment

@@ -1,0 +1,1 @@
+{"config_version":"1.0.0","maximum_items":200,"default_sort":["observed_at:desc","evidence_id:desc"],"technical_details":"allowlisted","contradictions":"preserve","export_roles":["service_desk_engineer","operator","auditor"],"raw_content_export":false}

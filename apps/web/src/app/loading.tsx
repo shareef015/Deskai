@@ -1,0 +1,1 @@
+export default function Loading(){return <main id="main-content" className="shell" aria-busy="true" aria-live="polite"><div className="state-panel"><span className="spinner" aria-hidden="true"/><h1>Loading workspace</h1><p>Retrieving the latest authorized support context.</p></div></main>}

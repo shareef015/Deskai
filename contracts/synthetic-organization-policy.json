@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "synthetic_only": true,
+  "seed": 41001,
+  "tenant_id": "tenant-demo-kw",
+  "organization_id": "org-northstar-demo",
+  "fixture": "data/synthetic/organization.json",
+  "requirements": {
+    "minimum_locations": 3,
+    "required_location_types": ["head_office", "branch", "warehouse"],
+    "minimum_departments": 15,
+    "support_groups": ["service-desk", "endpoint-engineering", "network-engineering", "identity-messaging", "cybersecurity"],
+    "all_relationships_tenant_scoped": true,
+    "stable_identifiers": true,
+    "replay_produces_identical_bytes": true,
+    "real_people_or_customer_data_forbidden": true
+  },
+  "reset": {
+    "mode": "replace_synthetic_tenant_only",
+    "requires_explicit_synthetic_mode": true,
+    "production_tenants_immutable": true
+  }
+}

@@ -1,0 +1,38 @@
+name: Frontend Quality and Reliability Gate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  frontend-quality:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies when available
+        shell: bash
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            echo "::warning::No package-lock.json in this increment; generate and commit one in the integrated repository."
+            npm install --no-audit --no-fund
+          fi
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run test:reliability
+      - run: npm run test:security
+      - run: npm run build
+      - name: Production dependency vulnerability gate
+        run: npm audit --omit=dev --audit-level=high
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

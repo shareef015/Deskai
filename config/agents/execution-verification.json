@@ -1,0 +1,1 @@
+{"config_version":"1.0.0","token_use":"single","pre_state":"required","partial_failure_route":"rollback","rollback_failure_route":"human_recovery","successful_execution_route":"technical_verification","closure_requires":["all_regression_checks","employee_fixed_confirmation"]}

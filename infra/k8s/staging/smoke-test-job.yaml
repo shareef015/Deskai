@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: deskpilot-smoke-test
+  namespace: deskpilot-staging
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: smoke
+          image: curlimages/curl:8.12.1
+          command:
+            - sh
+            - -ec
+            - |
+              curl --fail --silent --show-error http://deskpilot-api/healthz
+              curl --fail --silent --show-error http://deskpilot-api/readyz
+              curl --fail --silent --show-error http://deskpilot-frontend/api/health
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault

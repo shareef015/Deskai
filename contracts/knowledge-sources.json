@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "sources": [
+    {"id": "MS-OUTLOOK-PERFORMANCE", "authority": "Microsoft", "url": "https://support.microsoft.com/en-us/outlook/how-to-troubleshoot-performance-issues-in-outlook", "domains": ["performance", "safe_mode", "add_ins"]},
+    {"id": "MS-OUTLOOK-DATA-REPAIR", "authority": "Microsoft", "url": "https://support.microsoft.com/en-us/outlook/repair-outlook-data-files-pst-and-ost", "domains": ["pst", "ost", "scanpst", "backup"]},
+    {"id": "MS-OUTLOOK-SEARCH", "authority": "Microsoft", "url": "https://support.microsoft.com/en-us/outlook/troubleshooting-outlook-search-issues", "domains": ["search", "windows_index"]},
+    {"id": "MS-OUTLOOK-CONNECTIVITY", "authority": "Microsoft", "url": "https://learn.microsoft.com/en-us/troubleshoot/exchange/outlook-issues/outlook-connection-issues", "domains": ["connectivity", "exchange_online"]},
+    {"id": "MS-NEW-OUTLOOK", "authority": "Microsoft", "url": "https://learn.microsoft.com/en-us/microsoft-365-apps/outlook/overview-new-outlook-windows", "domains": ["new_outlook", "client_detection"]},
+    {"id": "MS-M365-NETWORK", "authority": "Microsoft", "url": "https://learn.microsoft.com/en-us/microsoft-365/enterprise/office-365-network-mac-perf-onboarding-tool", "domains": ["network", "connectivity"]}
+  ]
+}

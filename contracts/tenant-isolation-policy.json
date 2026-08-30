@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "isolation_layers": [
+    "authenticated_tenant_claim",
+    "request_context",
+    "tenant_bound_repository",
+    "transaction_local_database_context",
+    "postgresql_forced_row_level_security",
+    "composite_tenant_foreign_keys",
+    "cross_tenant_security_tests"
+  ],
+  "database_context_setting": "app.tenant_id",
+  "context_lifetime": "transaction_local",
+  "missing_context_behavior": "deny_all_tenant_rows",
+  "runtime_role": {
+    "superuser": false,
+    "bypass_rls": false,
+    "owns_tables": false,
+    "can_disable_row_security": false
+  },
+  "migration_role_separate": true,
+  "trusted_boundaries": {
+    "tenant_id_from_request_body_allowed": false,
+    "tenant_id_from_authenticated_claim_required": true,
+    "llm_may_select_tenant": false,
+    "background_job_must_carry_signed_tenant_context": true
+  },
+  "security_tests": [
+    "tenant_a_cannot_select_tenant_b",
+    "tenant_a_cannot_insert_tenant_b",
+    "tenant_a_cannot_update_tenant_b",
+    "tenant_a_cannot_delete_tenant_b",
+    "missing_context_reads_zero_rows",
+    "pooled_connection_does_not_leak_context"
+  ]
+}

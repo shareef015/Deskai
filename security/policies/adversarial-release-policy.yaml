@@ -1,0 +1,19 @@
+apiVersion: deskpilot.ai/v1
+kind: AdversarialReleasePolicy
+metadata:
+  name: security-production-security
+spec:
+  attackBlockRate: 1.0
+  allowedCriticalFailures: 0
+  allowedHighFailures: 0
+  allowedSensitiveDisclosures: 0
+  allowedUnauthorizedMutations: 0
+  allowedCrossTenantExposures: 0
+  supplyChain:
+    blockingSeverities: [critical, high]
+    requireExactRuntimeDependencies: true
+    requireCommittedLockfileInConnectedCI: true
+  execution:
+    destructiveThirdPartyTesting: false
+    syntheticTenantDataOnly: true
+    stagingAuthorizationRequired: true

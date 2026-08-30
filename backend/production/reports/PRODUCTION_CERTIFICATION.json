@@ -1,0 +1,40 @@
+{
+  "certificate": {
+    "blockers": [
+      "not_run:backup_dr_confirmation",
+      "not_run:canary_release",
+      "not_run:final_operational_acceptance",
+      "not_run:human_go_no_go",
+      "not_run:live_observability_slo",
+      "not_run:migration_approval",
+      "not_run:operator_handover",
+      "not_run:performance_evidence_review",
+      "not_run:production_config_secrets",
+      "not_run:production_smoke_golden",
+      "not_run:recruiter_portfolio_package",
+      "not_run:rollback_readiness",
+      "not_run:rolling_release",
+      "not_run:security_evidence_review",
+      "not_run:signed_artifact_promotion",
+      "staging_connected_certificate_not_passing"
+    ],
+    "controls_not_run": 15,
+    "controls_passed": 0,
+    "controls_total": 15,
+    "decision": "blocked_by_staging",
+    "fingerprint": "a0c1e838092704693e600d2d548e8cabd11a48f811758cd7d345b85b9631975a",
+    "metadata": {
+      "environment": "production",
+      "kind": "final-production-operational-acceptance",
+      "release_stage": "production",
+      "staging_fingerprint": "0c221aeb1824997f5b880fd84ed4e585ee37fc674a31548bf97f478ddebd5ee3"
+    },
+    "passed": false,
+    "staging_passed": false,
+    "warnings": []
+  },
+  "evidence": [],
+  "kind": "final-production-operational-acceptance",
+  "release_stage": "production",
+  "schema_version": 1
+}

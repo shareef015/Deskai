@@ -1,0 +1,1 @@
+"""Executable product-contract tests."""

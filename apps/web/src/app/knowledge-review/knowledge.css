@@ -1,0 +1,1 @@
+.score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}.score-grid>div{background:#f3f7fd;border-radius:.65rem;padding:.8rem}.score-grid strong{display:block;font-size:1.35rem}.score-grid span{color:var(--muted);font-size:.8rem}

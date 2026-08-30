@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "distribution": "proprietary_private_deployment",
+  "license_enforcement": "deterministic_non_llm",
+  "proposed_editions": {
+    "demo": {"real_devices": 0, "synthetic_devices": 10},
+    "pilot": {"real_devices": 10, "synthetic_devices": 10},
+    "team": {"real_devices": 50, "synthetic_devices": 10},
+    "business": {"real_devices": 250, "synthetic_devices": 10},
+    "enterprise": {"real_devices": "contract_defined", "synthetic_devices": 10}
+  },
+  "external_data_transfer": {
+    "default": "denied",
+    "requires": [
+      "customer_configuration",
+      "approved_data_processing_terms",
+      "purpose_limitation",
+      "redaction_policy",
+      "audit_logging"
+    ]
+  },
+  "excluded_promises": [
+    "guaranteed_resolution_of_every_incident",
+    "replacement_for_human_l2_l3_engineers",
+    "support_for_non_windows_endpoints",
+    "authorization_to_modify_customer_security_policy",
+    "automatic_acceptance_of_untrusted_knowledge"
+  ]
+}

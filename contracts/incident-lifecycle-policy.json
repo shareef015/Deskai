@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "initial_state": "new",
+  "terminal_states": ["resolved", "cancelled"],
+  "states": ["new", "triaging", "awaiting_consent", "investigating", "awaiting_approval", "remediating", "verifying", "resolved", "escalated", "cancelled"],
+  "transitions": {
+    "new": ["triaging", "cancelled"],
+    "triaging": ["awaiting_consent", "investigating", "escalated", "cancelled"],
+    "awaiting_consent": ["investigating", "escalated", "cancelled"],
+    "investigating": ["awaiting_approval", "verifying", "escalated", "cancelled"],
+    "awaiting_approval": ["remediating", "escalated", "cancelled"],
+    "remediating": ["verifying", "escalated"],
+    "verifying": ["resolved", "investigating", "remediating", "escalated"],
+    "escalated": ["investigating", "cancelled"],
+    "resolved": [],
+    "cancelled": []
+  },
+  "guards": {
+    "awaiting_consent_to_investigating": ["diagnostic_consent_valid", "device_relationship_valid"],
+    "awaiting_approval_to_remediating": ["action_approval_valid", "plan_fingerprint_matches", "pre_state_captured"],
+    "remediating_to_verifying": ["remediation_execution_complete"],
+    "verifying_to_resolved": ["technical_verification_passed", "employee_confirmation_received", "audit_events_complete"],
+    "any_to_escalated": ["escalation_reason_recorded"]
+  },
+  "persistence": {"atomic_status_and_version_predicate": true, "transition_event_same_transaction": true, "audit_event_same_transaction": true, "direct_status_patch_prohibited": true},
+  "authority": {"llm_may_propose_transition": true, "llm_may_bypass_guard": false, "guard_evidence_from_client_body_allowed": false}
+}

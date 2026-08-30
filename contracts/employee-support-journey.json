@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0.0",
+  "initial_state": "greeting",
+  "terminal_states": ["resolved", "escalated", "cancelled", "failed_safely"],
+  "states": [
+    "greeting", "intake", "clarifying", "classified", "employee_resolved",
+    "device_resolved", "awaiting_diagnostic_consent", "diagnosing",
+    "evidence_review", "root_cause_review", "planning_remediation",
+    "awaiting_remediation_authorization", "remediating", "technical_verification",
+    "awaiting_employee_confirmation", "resolved", "escalated", "cancelled",
+    "failed_safely"
+  ],
+  "required_sequence": [
+    "greeting", "intake", "classified", "employee_resolved", "device_resolved",
+    "awaiting_diagnostic_consent", "diagnosing", "evidence_review",
+    "root_cause_review", "planning_remediation",
+    "awaiting_remediation_authorization", "remediating",
+    "technical_verification", "awaiting_employee_confirmation", "resolved"
+  ],
+  "conversation_rules": {
+    "opening": "time_aware_greeting_then_how_can_i_help",
+    "one_question_at_a_time": true,
+    "do_not_repeat_known_answers": true,
+    "plain_language": true,
+    "explain_before_access_or_change": true,
+    "allow_guided_support_fallback": true,
+    "allow_human_request_at_any_time": true
+  },
+  "gates": {
+    "endpoint_session": ["authenticated_employee", "verified_device_relationship", "active_incident", "unexpired_diagnostic_consent"],
+    "remediation": ["evidence_bound_plan", "risk_classification", "policy_decision", "action_specific_authorization", "valid_capability_token", "pre_state_captured"],
+    "resolved": ["technical_verification_passed", "employee_confirmation_received", "audit_events_complete"]
+  },
+  "bounded_behavior": {
+    "maximum_clarifying_questions_before_replan": 6,
+    "maximum_diagnostic_rounds": 3,
+    "maximum_remediation_attempts": 2,
+    "maximum_employee_confirmation_prompts": 2,
+    "on_limit": "escalate_with_evidence"
+  },
+  "failure_paths": [
+    {"condition": "consent_declined", "destination": "guided_support_or_cancelled"},
+    {"condition": "identity_or_device_mismatch", "destination": "failed_safely"},
+    {"condition": "unsupported_or_high_risk", "destination": "escalated"},
+    {"condition": "authorization_declined_or_expired", "destination": "cancelled_or_escalated"},
+    {"condition": "remediation_failed", "destination": "rollback_then_replan_or_escalate"},
+    {"condition": "technical_verification_failed", "destination": "bounded_replan_or_escalate"},
+    {"condition": "employee_says_not_fixed", "destination": "bounded_replan_or_escalate"}
+  ],
+  "event_stream": [
+    "incident_created", "classification_updated", "employee_resolved",
+    "device_resolved", "consent_requested", "consent_decided",
+    "endpoint_session_opened", "diagnostic_started", "diagnostic_completed",
+    "hypothesis_updated", "remediation_proposed", "approval_requested",
+    "approval_decided", "remediation_started", "remediation_completed",
+    "verification_completed", "employee_confirmation_requested",
+    "employee_confirmation_received", "incident_resolved_or_escalated"
+  ]
+}

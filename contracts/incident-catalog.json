@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "domains": {
+    "outlook": {
+      "supported": [
+        "startup_failure",
+        "crash_or_freeze",
+        "slow_performance",
+        "disconnected_state",
+        "send_receive_failure",
+        "authentication_prompt_loop",
+        "ost_cache_or_sync_failure",
+        "add_in_conflict",
+        "profile_corruption",
+        "search_or_indexing_failure",
+        "shared_mailbox_sync_failure",
+        "calendar_sync_failure"
+      ],
+      "privileged_escalation": [
+        "exchange_permission_change",
+        "mailbox_delegation_change",
+        "conditional_access_change",
+        "identity_or_mfa_reset",
+        "mail_flow_or_transport_rule_change"
+      ]
+    },
+    "printer": {
+      "supported": [
+        "offline",
+        "not_discovered",
+        "stuck_queue",
+        "failed_print_job",
+        "spooler_failure",
+        "driver_mismatch",
+        "tcp_ip_port_mismatch",
+        "wsd_or_ipp_configuration_issue",
+        "print_server_connectivity",
+        "default_printer_configuration",
+        "permission_or_mapping_issue"
+      ],
+      "physical_escalation": [
+        "no_power",
+        "paper_jam",
+        "toner_or_ink_failure",
+        "mechanical_failure",
+        "damaged_usb_or_network_cable"
+      ]
+    },
+    "scanner": {
+      "supported": [
+        "not_detected",
+        "wia_service_failure",
+        "twain_or_wia_driver_issue",
+        "scan_application_configuration",
+        "network_scanner_connectivity",
+        "device_access_permission"
+      ],
+      "physical_escalation": [
+        "no_power",
+        "feeder_or_sensor_failure",
+        "mechanical_failure"
+      ]
+    },
+    "windows_connectivity": {
+      "supported": [
+        "dns_resolution_failure",
+        "proxy_configuration_issue",
+        "vpn_connectivity_issue",
+        "network_adapter_state",
+        "approved_service_failure",
+        "endpoint_agent_health"
+      ]
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0.0",
+  "roles": {
+    "cache": "reconstructible_acceleration_only",
+    "session": "encrypted_server_side_browser_session",
+    "lock": "bounded_coordination_not_source_of_truth",
+    "ephemeral_state": "reconstructible_progress_and_presence"
+  },
+  "keyspace": {
+    "prefix": "deskpilot:v1",
+    "tenant_namespace_hmac_required": true,
+    "raw_tenant_or_user_identifier_in_key_prohibited": true,
+    "configuration_fingerprint_required_for_ai_cache": true,
+    "maximum_key_length": 240
+  },
+  "ttl_seconds": {
+    "browser_session_idle": 1800,
+    "browser_session_absolute": 28800,
+    "distributed_lock_maximum": 120,
+    "read_cache_default": 300,
+    "presence": 60
+  },
+  "sessions": {
+    "encryption": "aes_256_gcm",
+    "key_version_embedded": true,
+    "rotation_supported": true,
+    "cookie_contains_opaque_id_only": true,
+    "logout_deletes_server_session": true,
+    "authentication_change_rotates_id": true
+  },
+  "locks": {
+    "acquire": "set_nx_px",
+    "release": "compare_token_then_delete_lua",
+    "random_owner_token_required": true,
+    "renewal_bounded": true,
+    "fencing_token_required_for_irreversible_work": true
+  },
+  "failure_modes": {
+    "session_unavailable": "fail_closed_503",
+    "authorization_or_consent_cache_unavailable": "read_authoritative_store_or_fail_closed",
+    "lock_unavailable": "do_not_execute_contended_operation",
+    "read_cache_unavailable": "bypass_to_authoritative_store",
+    "redis_data_loss": "reconstruct_cache_and_require_reauthentication"
+  }
+}

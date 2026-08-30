@@ -1,0 +1,1 @@
+{"version":"1.0.0","action_kinds":["diagnostic_consent","remediation_decision","handoff_note","employee_confirmation"],"states":["idle","editing","confirming","submitting","succeeded","failed","cancelled"],"double_submit_prevention":true,"modal_backdrop_cancel":true,"destructive_default":false}

@@ -1,0 +1,21 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: deskpilot-api
+  namespace: deskpilot-staging
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: deskpilot-api
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: deskpilot-frontend
+  namespace: deskpilot-staging
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: deskpilot-frontend

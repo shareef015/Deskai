@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "seed": 20260825,
+  "scenarios": [
+    {"id": "SYN-OUT-001", "device": "WIN11-01", "incident": "OUTLOOK-CRASH-001", "root_cause": "com_add_in_conflict", "expected_risk": "medium", "expected_outcome": "resolved_after_user_approved_add_in_disable"},
+    {"id": "SYN-OUT-002", "device": "WIN11-02", "incident": "OUTLOOK-AUTH-001", "root_cause": "conditional_access_or_mfa_issue", "expected_risk": "high", "expected_outcome": "escalated_to_identity_administrator"},
+    {"id": "SYN-OUT-003", "device": "WIN10-01", "incident": "OUTLOOK-CONNECT-001", "root_cause": "work_offline_enabled", "expected_risk": "low", "expected_outcome": "resolved_after_user_consent"},
+    {"id": "SYN-OUT-004", "device": "WIN10-02", "incident": "OUTLOOK-OST-001", "root_cause": "corrupt_ost", "expected_risk": "medium", "expected_outcome": "resolved_after_server_copy_check_and_rebuild"},
+    {"id": "SYN-OUT-005", "device": "WIN11-03", "incident": "OUTLOOK-SEARCH-001", "root_cause": "windows_index_incomplete", "expected_risk": "medium", "expected_outcome": "resolved_after_reindex_and_verification"},
+    {"id": "SYN-OUT-006", "device": "WIN11-04", "incident": "OUTLOOK-SYNC-001", "root_cause": "service_outage", "expected_risk": "read_only", "expected_outcome": "service_incident_linked_and_user_informed"},
+    {"id": "SYN-OUT-007", "device": "WIN10-03", "incident": "OUTLOOK-PST-001", "root_cause": "file_corruption", "expected_risk": "high", "expected_outcome": "human_approved_backup_and_scanpst"},
+    {"id": "SYN-OUT-008", "device": "WIN11-05", "incident": "OUTLOOK-PROFILE-001", "root_cause": "profile_corruption", "expected_risk": "medium", "expected_outcome": "parallel_profile_test_before_switch"},
+    {"id": "SYN-OUT-009", "device": "WIN10-04", "incident": "OUTLOOK-SHARED-001", "root_cause": "missing_or_delayed_permission", "expected_risk": "high", "expected_outcome": "escalated_to_exchange_administrator"},
+    {"id": "SYN-OUT-010", "device": "WIN11-01", "incident": "OUTLOOK-PERF-001", "root_cause": "resource_pressure", "expected_risk": "read_only", "expected_outcome": "evidence_package_and_hardware_escalation"}
+  ]
+}

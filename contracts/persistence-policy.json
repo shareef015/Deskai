@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "orm": "sqlalchemy-2-async",
+  "driver": "psycopg-3",
+  "tenant_scope": {
+    "required_for_tenant_repositories": true,
+    "unscoped_lookup_prohibited": true,
+    "tenant_id_mutation_prohibited": true
+  },
+  "transactions": {
+    "owner": "unit_of_work",
+    "autocommit": false,
+    "rollback_on_exception": true,
+    "session_per_request_or_job": true,
+    "external_io_inside_transaction_prohibited": true
+  },
+  "concurrency": {
+    "incident_strategy": "optimistic_version",
+    "duplicate_creation_strategy": "database_unique_constraint",
+    "lock_timeout_required_for_pessimistic_paths": true
+  },
+  "repository_rules": [
+    "return_domain_rows_not_raw_sql",
+    "flush_does_not_commit",
+    "not_found_is_explicit",
+    "cross_tenant_result_is_indistinguishable_from_not_found"
+  ]
+}

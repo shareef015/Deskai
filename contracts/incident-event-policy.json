@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0.0",
+  "envelope_version": "1",
+  "required_fields": ["event_id", "tenant_id", "incident_id", "event_type", "schema_version", "aggregate_version", "sequence_number", "actor_type", "correlation_id", "causation_id", "occurred_at", "payload"],
+  "ordering": {"scope": "tenant_incident", "source": "aggregate_version", "unique_sequence_required": true, "consumer_global_order_assumption_allowed": false},
+  "transaction": {"domain_event_and_outbox_same_transaction": true, "publish_inside_business_transaction": false, "rollback_removes_both": true},
+  "outbox": {"delivery": "at_least_once", "consumer_idempotency_required": true, "payload_identity_immutable": true, "delivery_state_mutable": true, "claim_uses_skip_locked": true, "maximum_attempts": 12, "dead_letter_required": true},
+  "privacy": {"secrets_prohibited": true, "hidden_reasoning_prohibited": true, "payload_schema_allowlisted": true, "maximum_payload_bytes": 65536},
+  "evolution": {"event_type_stable": true, "schema_version_required": true, "backward_compatible_within_major": true, "breaking_change_uses_new_event_type_or_major": true}
+}

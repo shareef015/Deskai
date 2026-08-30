@@ -1,0 +1,174 @@
+{
+  "schema_version": "1.0.0",
+  "platform": "windows_10_and_11",
+  "architectures": ["wia_2", "twain_vendor_supplied"],
+  "connections": ["usb", "ethernet", "wifi", "wsd", "vendor_network_protocol"],
+  "evidence_order": [
+    "employee_physical_observation",
+    "windows_scanner_inventory",
+    "wia_service_and_event_state",
+    "driver_and_architecture_compatibility",
+    "connection_and_network_reachability",
+    "application_specific_behavior",
+    "controlled_test_scan",
+    "version_matched_knowledge"
+  ],
+  "privacy_rules": [
+    "do_not_scan_employee_documents_for_testing",
+    "use_approved_synthetic_test_sheet",
+    "do_not_read_scan_content_for_routine_diagnostics",
+    "store_test_artifact_only_in_approved_temporary_location",
+    "delete_test_artifact_per_retention_policy"
+  ],
+  "risk_levels": {
+    "read_only": "no_endpoint_change",
+    "low": "reversible_application_or_session_change",
+    "medium": "persistent_service_mapping_or_application_change",
+    "high": "driver_security_policy_firmware_or_privileged_change"
+  },
+  "incidents": [
+    {
+      "id": "SCAN-POWER-001",
+      "name": "physical_power_feeder_or_device_error",
+      "signals": ["no_display", "cover_open", "paper_jam", "feeder_error", "lamp_or_sensor_error"],
+      "questions": ["Is the scanner or multifunction device powered on?", "What appears on its panel?", "Is the feeder, cover and test sheet positioned correctly?"],
+      "diagnostics": ["request_physical_observation", "inspect_windows_device_state", "check_other_users"],
+      "hypotheses": ["no_power", "cover_open", "paper_jam", "feeder_failure", "lamp_or_sensor_failure"],
+      "remediations": [{"action": "guided_physical_check", "risk": "read_only", "approval": "user", "rollback": "not_required"}],
+      "verification": ["device_ready_observed", "controlled_test_scan_completed", "test_artifact_accessible", "employee_confirms"],
+      "escalation": ["electrical_hazard", "mechanical_failure", "parts_or_cleaning_required"]
+    },
+    {
+      "id": "SCAN-DISCOVERY-001",
+      "name": "scanner_not_found_or_not_recognized",
+      "signals": ["missing_from_scanner_inventory", "usb_not_recognized", "add_device_timeout", "no_wia_device"],
+      "questions": ["Is it USB-connected, network-connected or part of a multifunction printer?", "Can another approved computer detect it?", "Did it work before a Windows or driver update?"],
+      "diagnostics": ["enumerate_scanners", "inspect_plug_and_play", "inspect_usb_or_network_link", "inspect_wia_service", "inventory_imaging_drivers"],
+      "hypotheses": ["physical_link_failure", "wia_service_failure", "driver_missing", "wrong_network", "device_not_in_scan_mode"],
+      "remediations": [
+        {"action": "restart_wia_after_dependency_check", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_service_state"},
+        {"action": "add_approved_scanner", "risk": "medium", "approval": "user_or_engineer", "rollback": "remove_added_mapping"},
+        {"action": "install_approved_scanner_driver", "risk": "high", "approval": "privileged_engineer", "rollback": "restore_previous_signed_driver"}
+      ],
+      "verification": ["scanner_inventory_contains_target", "controlled_test_scan_completed", "test_artifact_accessible", "employee_confirms"]
+    },
+    {
+      "id": "SCAN-WIA-001",
+      "name": "windows_image_acquisition_service_failure",
+      "signals": ["stisvc_stopped", "wia_start_error", "all_wia_apps_fail", "wia_device_unavailable"],
+      "questions": ["Do all scanning applications fail?", "Did this begin after an installation or update?", "Are camera or other imaging devices also affected?"],
+      "diagnostics": ["inspect_stisvc_state", "inspect_service_dependencies", "collect_service_events", "collect_wia_events", "inventory_recent_driver_changes"],
+      "hypotheses": ["wia_service_stopped", "dependency_failure", "faulting_minidriver", "resource_pressure", "service_configuration_failure"],
+      "remediations": [
+        {"action": "restart_wia_after_dependency_check", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_service_state"},
+        {"action": "repair_wia_service_configuration", "risk": "high", "approval": "privileged_engineer", "rollback": "restore_service_configuration_snapshot"},
+        {"action": "replace_faulting_imaging_driver", "risk": "high", "approval": "privileged_engineer", "rollback": "restore_previous_signed_driver"}
+      ],
+      "verification": ["wia_service_stable", "scanner_enumerates", "controlled_test_scan_completed", "test_artifact_accessible", "employee_confirms"]
+    },
+    {
+      "id": "SCAN-DRIVER-001",
+      "name": "wia_or_twain_driver_missing_incompatible_or_crashing",
+      "signals": ["driver_unavailable", "data_source_missing", "architecture_mismatch", "scan_app_crash", "driver_load_error"],
+      "questions": ["Which scanning application and interface are required?", "What is the exact scanner model?", "Did this begin after a Windows, application or driver update?"],
+      "diagnostics": ["inventory_wia_driver", "inventory_twain_source", "verify_driver_signature", "compare_device_model", "inspect_process_architecture", "collect_crash_evidence"],
+      "hypotheses": ["missing_wia_driver", "missing_vendor_twain_source", "x86_x64_mismatch", "wrong_model_driver", "driver_regression"],
+      "remediations": [
+        {"action": "select_compatible_existing_data_source", "risk": "low", "approval": "user", "rollback": "restore_application_source"},
+        {"action": "install_approved_signed_wia_or_twain_package", "risk": "high", "approval": "privileged_engineer", "rollback": "restore_previous_signed_driver"}
+      ],
+      "verification": ["driver_loads_without_error", "target_application_detects_scanner", "controlled_test_scan_completed", "test_artifact_accessible", "employee_confirms"]
+    },
+    {
+      "id": "SCAN-LOCK-001",
+      "name": "scanner_busy_or_application_lock",
+      "signals": ["device_busy", "scanner_in_use", "wia_app_blocked", "twain_source_locked"],
+      "questions": ["Is another scanning or vendor application open?", "Did a previous scan stop unexpectedly?", "Is the device shared with another computer?"],
+      "diagnostics": ["enumerate_scan_related_processes", "identify_device_session_without_content", "inspect_wia_state", "check_other_authorized_sessions"],
+      "hypotheses": ["vendor_app_holds_device_lock", "abandoned_scan_session", "another_user_scanning", "driver_deadlock"],
+      "remediations": [
+        {"action": "close_user_approved_locking_application", "risk": "low", "approval": "user", "rollback": "reopen_application"},
+        {"action": "restart_wia_after_dependency_check", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_service_state"}
+      ],
+      "verification": ["device_lock_released", "controlled_test_scan_completed", "test_artifact_accessible", "employee_confirms"]
+    },
+    {
+      "id": "SCAN-NETWORK-001",
+      "name": "network_scanner_unreachable_or_wrong_address",
+      "signals": ["network_timeout", "hostname_unresolved", "stale_ip", "wsd_discovery_failure"],
+      "questions": ["What asset label or hostname is expected?", "Can another approved device reach it?", "Was the device address or network recently changed?"],
+      "diagnostics": ["inspect_scanner_address", "resolve_hostname", "test_ip_reachability", "test_approved_scan_protocol", "compare_asset_inventory", "detect_duplicate_ip"],
+      "hypotheses": ["stale_ip_address", "dns_failure", "wrong_network", "network_acl", "duplicate_ip", "wsd_failure"],
+      "remediations": [
+        {"action": "update_approved_scanner_address", "risk": "medium", "approval": "engineer", "rollback": "restore_previous_address"},
+        {"action": "recreate_approved_network_scanner_mapping", "risk": "medium", "approval": "engineer", "rollback": "restore_previous_mapping"},
+        {"action": "change_dns_vlan_or_acl", "risk": "high", "approval": "network_administrator", "rollback": "restore_network_configuration"}
+      ],
+      "verification": ["scanner_reachable", "scanner_enumerates", "controlled_test_scan_completed", "test_artifact_accessible", "employee_confirms"]
+    },
+    {
+      "id": "SCAN-APP-001",
+      "name": "scanning_application_configuration_or_compatibility_failure",
+      "signals": ["windows_scan_fails", "vendor_app_only_failure", "application_crash", "wrong_data_source"],
+      "questions": ["Does the scanner work in Windows Scan?", "Which business application must scan successfully?", "Which source, format and destination are selected?"],
+      "diagnostics": ["test_windows_scan_with_synthetic_sheet", "inspect_application_source", "inspect_output_format", "inspect_approved_destination", "collect_application_events"],
+      "hypotheses": ["wrong_data_source", "application_specific_incompatibility", "unsupported_format", "invalid_destination", "application_corruption"],
+      "remediations": [
+        {"action": "correct_application_scan_source", "risk": "low", "approval": "user", "rollback": "restore_application_source"},
+        {"action": "correct_approved_format_or_destination", "risk": "low", "approval": "user", "rollback": "restore_application_settings"},
+        {"action": "repair_scanning_application", "risk": "medium", "approval": "engineer", "rollback": "restore_application_configuration"}
+      ],
+      "verification": ["business_application_detects_scanner", "controlled_test_scan_completed", "test_artifact_accessible", "employee_confirms"]
+    },
+    {
+      "id": "SCAN-PERMISSION-001",
+      "name": "destination_or_device_access_permission_failure",
+      "signals": ["access_denied", "cannot_save", "network_folder_denied", "device_policy_block"],
+      "questions": ["Can you scan to a local approved temporary folder?", "Is the destination local, network or cloud-based?", "Were your role or permissions recently changed?"],
+      "diagnostics": ["verify_user_and_device", "test_approved_temporary_destination", "inspect_destination_acl_without_content", "inspect_policy_application", "compare_authorized_entitlement"],
+      "hypotheses": ["destination_permission_missing", "controlled_folder_access", "policy_block", "invalid_path", "storage_quota"],
+      "remediations": [
+        {"action": "select_approved_accessible_destination", "risk": "low", "approval": "user", "rollback": "restore_previous_destination"},
+        {"action": "change_destination_permission_or_security_policy", "risk": "high", "approval": "resource_or_security_administrator", "rollback": "restore_permission_snapshot"}
+      ],
+      "verification": ["destination_write_succeeds", "controlled_test_scan_completed", "test_artifact_accessible", "employee_confirms"]
+    },
+    {
+      "id": "SCAN-MFP-001",
+      "name": "multifunction_printer_scans_but_prints_or_prints_but_not_scans",
+      "signals": ["print_function_works_scan_missing", "scanner_function_works_print_missing", "partial_driver_package", "separate_device_entries"],
+      "questions": ["Does printing work from the same computer?", "Does scanning work from another approved computer?", "Was the full multifunction package installed?"],
+      "diagnostics": ["compare_print_and_scan_inventory", "inspect_wia_and_print_drivers", "inspect_device_functions", "test_network_protocols_separately", "inspect_vendor_package_components"],
+      "hypotheses": ["scan_component_missing", "partial_driver_package", "separate_network_protocol_failure", "wia_service_failure", "application_source_error"],
+      "remediations": [
+        {"action": "add_approved_scan_component", "risk": "medium", "approval": "engineer", "rollback": "remove_added_component"},
+        {"action": "install_approved_multifunction_package", "risk": "high", "approval": "privileged_engineer", "rollback": "restore_previous_signed_packages"}
+      ],
+      "verification": ["print_function_unchanged", "scan_function_enumerates", "controlled_test_scan_completed", "test_artifact_accessible", "employee_confirms"]
+    },
+    {
+      "id": "SCAN-QUALITY-001",
+      "name": "poor_quality_cropping_feeder_or_multipage_failure",
+      "signals": ["blurred_scan", "cropped_page", "wrong_orientation", "blank_pages", "multipage_failure", "feeder_double_feed"],
+      "questions": ["Does the issue occur on flatbed, feeder or both?", "What size, orientation, resolution and color mode are selected?", "Does the approved synthetic test sheet show the same problem?"],
+      "diagnostics": ["inspect_scan_profile", "run_flatbed_test", "run_feeder_test_if_safe", "compare_resolution_and_page_size", "request_employee_quality_observation"],
+      "hypotheses": ["incorrect_scan_profile", "page_size_mismatch", "feeder_alignment", "dirty_glass_or_rollers", "driver_limitation", "mechanical_failure"],
+      "remediations": [
+        {"action": "correct_user_approved_scan_profile", "risk": "low", "approval": "user", "rollback": "restore_scan_profile"},
+        {"action": "guided_safe_cleaning_per_vendor_policy", "risk": "medium", "approval": "user_or_engineer", "rollback": "not_required"}
+      ],
+      "verification": ["controlled_test_scan_completed", "test_artifact_accessible", "image_quality_confirmed", "multipage_result_confirmed_if_applicable", "employee_confirms"],
+      "escalation": ["feeder_mechanical_failure", "lamp_or_sensor_failure", "unsafe_cleaning_requirement"]
+    }
+  ],
+  "global_escalation_triggers": [
+    "electrical_or_physical_hazard",
+    "mechanical_feeder_lamp_or_sensor_failure",
+    "driver_or_firmware_change_requires_privilege",
+    "network_or_security_policy_change_required",
+    "sensitive_document_exposure_suspected",
+    "unsupported_scanner_or_application",
+    "multiple_users_or_site_wide_impact",
+    "bounded_retry_limit_reached"
+  ]
+}

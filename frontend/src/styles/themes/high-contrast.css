@@ -1,0 +1,14 @@
+@media (forced-colors: active) {
+  :root {
+    --background: Canvas;
+    --surface: Canvas;
+    --surface-elevated: Canvas;
+    --foreground: CanvasText;
+    --foreground-muted: CanvasText;
+    --primary: LinkText;
+    --primary-foreground: Canvas;
+    --border: CanvasText;
+    --border-strong: CanvasText;
+    --focus-ring: Highlight;
+  }
+}

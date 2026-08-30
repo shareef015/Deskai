@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0.0",
+  "enforcement": "required",
+  "python": {
+    "formatter_and_linter": "ruff",
+    "type_checker": "mypy-strict",
+    "test_runner": "pytest",
+    "minimum_python": "3.11"
+  },
+  "typescript": {
+    "type_checker": "tsc-noEmit",
+    "linter": "eslint",
+    "minimum_node": "22"
+  },
+  "security": {
+    "secret_scanner": "gitleaks",
+    "python_dependency_audit": "pip-audit",
+    "javascript_dependency_audit": "npm-audit",
+    "dependency_review": true
+  },
+  "ci": {
+    "required_jobs": [
+      "contract-tests",
+      "python-quality",
+      "web-quality",
+      "secret-scan",
+      "dependency-audit"
+    ],
+    "pull_request_required": true,
+    "default_branch_required": true,
+    "cancel_stale_runs": true,
+    "least_privilege_permissions": true,
+    "mutable_action_tags_allowed": false
+  },
+  "exceptions": {
+    "silent_bypass_allowed": false,
+    "documented_owner_required": true,
+    "expiry_required": true,
+    "security_approval_required": true
+  }
+}

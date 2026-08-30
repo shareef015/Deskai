@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deskpilot-api
+  namespace: deskpilot-production
+spec:
+  replicas: 4
+  minReadySeconds: 15
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: deskpilot-api
+  template:
+    metadata:
+      labels:
+        app: deskpilot-api
+        app.kubernetes.io/name: deskpilot-ai
+        app.kubernetes.io/component: api
+    spec:
+      serviceAccountName: deskpilot-api
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: api
+          image: registry.example.invalid/deskpilot-api@sha256:REPLACE_WITH_STAGING_CERTIFIED_DIGEST
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: deskpilot-config
+            - secretRef:
+                name: deskpilot-runtime-secrets
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            failureThreshold: 24
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: deskpilot-api
+  namespace: deskpilot-production
+automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: deskpilot-api
+  namespace: deskpilot-production
+spec:
+  selector:
+    app: deskpilot-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

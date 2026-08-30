@@ -1,0 +1,19 @@
+[project]
+name = "deskpilot-identity"
+version = "0.128.0"
+requires-python = ">=3.12,<3.14"
+description = "DeskPilot AI production identity, API security, governed AI execution, LLMOps, performance, adversarial and final end-to-end certification core"
+
+[project.optional-dependencies]
+web = ["fastapi>=0.115,<1"]
+test = ["fastapi==0.128.2", "httpx==0.28.1"]
+observability = ["opentelemetry-api==1.44.0", "opentelemetry-sdk==1.44.0", "opentelemetry-exporter-otlp-proto-http==1.44.0", "langsmith==0.11.1"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+include = ["src"]

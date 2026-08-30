@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "targets": {
+    "interactive_query_p95_ms": 200,
+    "api_total_p95_ms": 500,
+    "background_query_p95_ms": 1000,
+    "slow_query_threshold_ms": 500,
+    "statement_timeout_ms": 30000,
+    "lock_timeout_ms": 5000
+  },
+  "plan_gates": {
+    "production_statistics_required": true,
+    "explain_analyze_on_synthetic_data_required": true,
+    "unbounded_sequential_scan_prohibited": true,
+    "tenant_leading_key_required": true,
+    "estimated_actual_row_ratio_max": 10,
+    "temporary_disk_spill_prohibited_for_interactive_queries": true
+  },
+  "pagination": {
+    "strategy": "keyset",
+    "offset_pagination_for_large_sets_prohibited": true,
+    "default_limit": 50,
+    "maximum_limit": 200
+  },
+  "operations": {
+    "pg_stat_statements_required": true,
+    "auto_explain_sampling_allowed": true,
+    "index_usage_review_days": 30,
+    "index_creation_method_production": "concurrently",
+    "vacuum_and_analyze_owned_by_database_operations": true
+  }
+}

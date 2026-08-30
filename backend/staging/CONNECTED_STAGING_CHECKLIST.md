@@ -1,0 +1,24 @@
+# Connected staging evidence checklist
+
+- [ ] Real OIDC login/logout/step-up
+- [ ] PostgreSQL RLS cross-tenant denial
+- [ ] Redis live connectivity/reconnect/TTL
+- [ ] Vector retrieval and tenant-safe citations
+- [ ] Live model routing and budget telemetry
+- [ ] Authenticated MCP transport
+- [ ] Windows Printer staging flow
+- [ ] Windows Outlook staging flow
+- [ ] SSE reconnect/resume
+- [ ] WebSocket heartbeat/reconnect/fan-out
+- [ ] OpenTelemetry export
+- [ ] LangSmith export/evaluation
+- [ ] Kubernetes HPA/PDB behavior
+- [ ] External secrets/KMS
+- [ ] Forward migration
+- [ ] Backup/restore RPO/RTO drill
+- [ ] Rolling deployment
+- [ ] Rollback drill
+- [ ] Failover/DR drill
+- [ ] Connected load/stress/soak
+- [ ] Authorized staging penetration test
+- [ ] Connected staging RC certificate PASS

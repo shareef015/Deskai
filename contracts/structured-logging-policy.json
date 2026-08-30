@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "authority": "deterministic_observability_policy",
+  "format": "newline_delimited_json",
+  "required_fields": ["timestamp", "level", "event", "service", "environment", "correlation_id", "fields"],
+  "optional_linkage_fields": ["trace_id", "incident_id", "audit_event_id", "tenant_key"],
+  "correlation": {
+    "accepted_inbound_header": "X-Correlation-ID",
+    "generated_when_absent": true,
+    "returned_response_header": "X-Correlation-ID",
+    "propagated_to": ["api", "worker", "langgraph", "rag", "mcp_gateway", "endpoint_agent", "audit"]
+  },
+  "privacy": {
+    "tenant_identifier": "deployment_salted_hash",
+    "email_address": "redacted",
+    "secret_values": "redacted",
+    "hidden_reasoning": "prohibited",
+    "raw_document_or_conversation_content": "prohibited",
+    "maximum_string_length": 2048
+  },
+  "prohibited_fields": ["password", "authorization", "cookie", "api_key", "private_key", "connection_string", "prompt_hidden_reasoning"],
+  "retention_classes": {
+    "operational": {"default_days": 30, "maximum_days": 90},
+    "security": {"default_days": 180, "maximum_days": 365},
+    "audit": {"storage": "immutable_audit_store", "log_payload_is_not_authoritative_audit_record": true}
+  },
+  "controls": {
+    "utc_timestamps": true,
+    "stable_event_names": true,
+    "no_unstructured_exception_dump_in_production": true,
+    "backpressure_must_not_break_business_transaction": true,
+    "access_is_role_scoped_and_audited": true
+  }
+}

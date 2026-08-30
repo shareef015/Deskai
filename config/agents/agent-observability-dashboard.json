@@ -1,0 +1,1 @@
+{"config_version":"1.0.0","maximum_spans":1000,"drift_alert_threshold":0.2,"environment_mix_allowed":false,"raw_payload_capture":false,"metrics":["latency_ms","tokens","cost_microusd","quality_score","drift_score","SLO_status","circuit_state"]}

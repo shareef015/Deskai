@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "delivery": "at_least_once",
+  "source_of_truth": "postgresql",
+  "enqueue": {"same_transaction_as_triggering_state": true, "allowlisted_job_type_required": true, "schema_version_required": true, "idempotency_key_required": true, "maximum_payload_bytes": 65536},
+  "claim": {"tenant_context_required": true, "select_for_update_skip_locked": true, "lease_token_random": true, "lease_seconds": 60, "heartbeat_seconds": 20, "maximum_batch": 25},
+  "retry": {"maximum_attempts": 8, "strategy": "exponential_backoff_full_jitter", "base_seconds": 2, "maximum_seconds": 900, "non_retryable_error_codes": ["invalid_payload", "unsupported_job_type", "authorization_denied", "tenant_mismatch"]},
+  "completion": {"matching_lease_token_required": true, "expired_lease_cannot_complete": true, "handler_idempotency_required": true, "result_event_required": true},
+  "dead_letter": {"required": true, "payload_immutable": true, "manual_requeue_authorized_and_audited": true, "automatic_infinite_retry_prohibited": true},
+  "safety": {"arbitrary_code_job_prohibited": true, "secrets_in_payload_prohibited": true, "external_io_outside_database_transaction": true, "graceful_shutdown_stops_new_claims": true, "inflight_lease_allowed_to_expire": true}
+}

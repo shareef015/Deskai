@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "sources": [
+    {"id": "MS-WIFI-TROUBLESHOOT", "authority": "Microsoft", "url": "https://support.microsoft.com/en-us/windows/experience/connectivity-networking/fix-wi-fi-connection-issues-in-windows", "domains": ["wifi", "adapter", "network_reset"]},
+    {"id": "MS-ETHERNET-TROUBLESHOOT", "authority": "Microsoft", "url": "https://support.microsoft.com/en-us/windows/experience/connectivity-networking/fix-ethernet-connection-problems-in-windows", "domains": ["ethernet", "adapter", "network_reset"]},
+    {"id": "MS-NETWORK-SETTINGS", "authority": "Microsoft", "url": "https://support.microsoft.com/en-us/windows/experience/connectivity-networking/essential-network-settings-and-tasks-in-windows", "domains": ["ip", "dhcp", "dns", "gateway"]},
+    {"id": "MS-WLAN-REPORT", "authority": "Microsoft", "url": "https://support.microsoft.com/en-us/windows/experience/connectivity-networking/analyze-the-wireless-network-report", "domains": ["wifi", "events", "drivers", "privacy"]},
+    {"id": "MS-PROXY", "authority": "Microsoft", "url": "https://support.microsoft.com/en-us/windows/experience/connectivity-networking/use-a-proxy-server-in-windows", "domains": ["proxy", "pac", "policy"]},
+    {"id": "MS-DNS-COLLECTION", "authority": "Microsoft", "url": "https://learn.microsoft.com/en-us/windows-server/networking/dns/troubleshoot/troubleshoot-dns-data-collection", "domains": ["dns", "cache", "trace"]},
+    {"id": "MS-VPN-GUIDANCE", "authority": "Microsoft", "url": "https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/troubleshoot-remote-access-vpn-and-aovpn-guidance", "domains": ["vpn", "routes", "events"]}
+  ]
+}

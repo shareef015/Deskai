@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0.0",
+  "requirements": [
+    {"id": "FR-001", "capability": "time_aware_greeting", "actor": "employee", "shall": "start_each_new_interaction_with_localized_time_aware_greeting"},
+    {"id": "FR-002", "capability": "incident_intake", "actor": "employee", "shall": "capture_problem_symptoms_impact_and_urgency_without_repeated_questions"},
+    {"id": "FR-003", "capability": "classification", "actor": "system", "shall": "classify_outlook_printer_scanner_or_supporting_windows_network_domain_with_confidence"},
+    {"id": "FR-004", "capability": "identity_resolution", "actor": "system", "shall": "resolve_authenticated_tenant_employee_and_device_relationship"},
+    {"id": "FR-005", "capability": "consent", "actor": "employee", "shall": "grant_decline_or_revoke_incident_specific_diagnostic_consent"},
+    {"id": "FR-006", "capability": "diagnostics", "actor": "system", "shall": "execute_only_authorized_typed_read_only_diagnostics"},
+    {"id": "FR-007", "capability": "rag", "actor": "system", "shall": "retrieve_permission_and_version_matched_knowledge_with_citations"},
+    {"id": "FR-008", "capability": "root_cause", "actor": "system", "shall": "rank_evidence_bound_hypotheses_and_expose_uncertainty"},
+    {"id": "FR-009", "capability": "planning", "actor": "system", "shall": "produce_typed_risk_classified_reversible_remediation_plan"},
+    {"id": "FR-010", "capability": "approval", "actor": "authorized_human", "shall": "approve_or_reject_action_specific_change_under_segregation_of_duties"},
+    {"id": "FR-011", "capability": "execution", "actor": "endpoint_agent", "shall": "execute_valid_capability_token_and_record_pre_result_post_and_rollback_state"},
+    {"id": "FR-012", "capability": "verification", "actor": "system", "shall": "verify_original_business_function_not_only_tool_exit_status"},
+    {"id": "FR-013", "capability": "confirmation", "actor": "employee", "shall": "confirm_success_before_incident_resolution"},
+    {"id": "FR-014", "capability": "escalation", "actor": "system", "shall": "produce_complete_evidence_package_on_unsupported_failed_or_exhausted_path"},
+    {"id": "FR-015", "capability": "audit", "actor": "system", "shall": "append_immutable_tenant_scoped_events_for_every_material_decision_and_action"},
+    {"id": "FR-016", "capability": "synthetic_mode", "actor": "demo_operator", "shall": "replay_seeded_scenarios_without_real_endpoint_or_personal_data"},
+    {"id": "FR-017", "capability": "realtime", "actor": "employee", "shall": "stream_plain_language_activity_without_exposing_secrets_or_hidden_reasoning"},
+    {"id": "FR-018", "capability": "human_handoff", "actor": "employee", "shall": "request_human_engineer_at_any_time"}
+  ],
+  "use_cases": [
+    {"id": "UC-001", "name": "guided_support", "preconditions": ["authenticated_employee"], "success": ["instructions_completed", "employee_confirms"], "alternative": ["create_incident", "request_diagnostics", "human_handoff"]},
+    {"id": "UC-002", "name": "assisted_read_only_diagnosis", "preconditions": ["active_incident", "device_resolved", "diagnostic_consent"], "success": ["evidence_collected", "hypothesis_ranked"], "alternative": ["guided_support", "escalate"]},
+    {"id": "UC-003", "name": "low_risk_live_repair", "preconditions": ["diagnosis_supported", "authorization_valid"], "success": ["repair_executed", "technical_verification", "employee_confirms"], "alternative": ["rollback", "replan", "escalate"]},
+    {"id": "UC-004", "name": "medium_high_risk_approval", "preconditions": ["typed_plan", "risk_classified", "independent_approver"], "success": ["decision_audited", "capability_issued_or_denied"], "alternative": ["expire", "cancel", "escalate"]},
+    {"id": "UC-005", "name": "failed_repair_rollback", "preconditions": ["execution_failed_or_verification_failed"], "success": ["rollback_attempted", "post_rollback_verified", "evidence_preserved"], "alternative": ["manual_recovery_escalation"]},
+    {"id": "UC-006", "name": "synthetic_recruiter_demo", "preconditions": ["synthetic_tenant", "seed_selected"], "success": ["deterministic_outcome", "no_real_data", "reset_available"], "alternative": ["scenario_failure_report"]},
+    {"id": "UC-007", "name": "employee_revokes_access", "preconditions": ["active_endpoint_session"], "success": ["session_revoked", "capabilities_invalidated", "audit_appended"], "alternative": ["forced_expiry_and_alert"]},
+    {"id": "UC-008", "name": "l2_l3_escalation", "preconditions": ["unsupported_or_unresolved_incident"], "success": ["owner_assigned", "evidence_package_complete", "employee_informed"], "alternative": ["queue_and_sla_escalation"]}
+  ],
+  "traceability": {
+    "scope_contract": "product-scope.json",
+    "journey_contract": "employee-support-journey.json",
+    "authority_contract": "personas-authority-model.json",
+    "domain_catalogs": ["outlook-support-catalog.json", "printer-support-catalog.json", "scanner-support-catalog.json", "windows-network-support-catalog.json"]
+  }
+}

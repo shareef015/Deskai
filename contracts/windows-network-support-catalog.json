@@ -1,0 +1,215 @@
+{
+  "schema_version": "1.0.0",
+  "platform": "windows_10_and_11",
+  "purpose": "support_outlook_printer_scanner_and_endpoint_connectivity",
+  "evidence_order": [
+    "employee_scope_and_last_known_good",
+    "windows_build_and_update_state",
+    "adapter_link_and_driver_state",
+    "ip_dhcp_gateway_and_route_state",
+    "dns_resolution",
+    "proxy_vpn_and_policy_state",
+    "target_specific_port_and_application_test",
+    "event_logs_and_resource_state"
+  ],
+  "sensitive_evidence_rules": [
+    "never_collect_wifi_keys",
+    "never_collect_vpn_secrets",
+    "never_export_private_certificate_keys",
+    "redact_usernames_public_ips_and_internal_hostnames_by_policy",
+    "collect_event_windows_not_unbounded_logs"
+  ],
+  "risk_levels": {
+    "read_only": "no_endpoint_change",
+    "low": "reversible_cache_or_connection_refresh",
+    "medium": "persistent_adapter_service_or_user_network_change",
+    "high": "network_reset_driver_firewall_vpn_proxy_dns_or_enterprise_policy_change"
+  },
+  "incidents": [
+    {
+      "id": "WIN-NET-ADAPTER-001",
+      "name": "network_adapter_disabled_missing_or_error",
+      "signals": ["adapter_disabled", "adapter_missing", "device_problem_code", "driver_load_error", "no_link"],
+      "questions": ["Are you using Wi-Fi, Ethernet or both?", "Did this begin after an update, dock change or restart?", "Is Airplane mode enabled?"],
+      "diagnostics": ["enumerate_adapters", "inspect_link_state", "inspect_device_problem_code", "inspect_driver_version", "inspect_airplane_mode", "collect_network_events"],
+      "hypotheses": ["adapter_disabled", "physical_link_failure", "driver_failure", "dock_or_usb_failure", "airplane_mode", "hardware_failure"],
+      "remediations": [
+        {"action": "enable_approved_adapter", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_adapter_state"},
+        {"action": "disable_enable_approved_adapter", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_adapter_state"},
+        {"action": "install_approved_signed_adapter_driver", "risk": "high", "approval": "privileged_engineer", "rollback": "restore_previous_signed_driver"}
+      ],
+      "verification": ["adapter_enabled", "valid_link_state", "target_business_function_works", "employee_confirms"]
+    },
+    {
+      "id": "WIN-NET-WIFI-001",
+      "name": "wifi_disconnected_unstable_or_wrong_network",
+      "signals": ["wifi_disconnected", "frequent_disconnect", "weak_signal", "wrong_ssid", "authentication_failure"],
+      "questions": ["Which approved network should you be connected to?", "Are nearby employees affected?", "Does the issue change by location?"],
+      "diagnostics": ["inspect_wifi_state", "inspect_ssid_without_key", "inspect_signal_quality", "collect_wlan_disconnect_reasons", "inspect_driver", "compare_site_impact"],
+      "hypotheses": ["wrong_network", "weak_signal_or_interference", "authentication_or_certificate_failure", "driver_failure", "access_point_or_site_outage"],
+      "remediations": [
+        {"action": "connect_to_approved_existing_wifi_profile", "risk": "low", "approval": "user", "rollback": "disconnect_profile"},
+        {"action": "reconnect_approved_wifi_profile", "risk": "low", "approval": "user", "rollback": "restore_previous_connection"},
+        {"action": "delete_or_reprovision_managed_wifi_profile", "risk": "high", "approval": "network_or_endpoint_administrator", "rollback": "restore_managed_profile"}
+      ],
+      "verification": ["approved_ssid_connected", "connection_stable_for_policy_window", "target_business_function_works", "employee_confirms"]
+    },
+    {
+      "id": "WIN-NET-ETH-001",
+      "name": "ethernet_no_link_or_intermittent_link",
+      "signals": ["media_disconnected", "link_flap", "limited_connectivity", "dock_adapter_missing"],
+      "questions": ["Is Ethernet connected directly or through a dock?", "Are link lights visible?", "Does a known-good approved cable or port work?"],
+      "diagnostics": ["inspect_ethernet_link", "inspect_speed_and_duplex_read_only", "inspect_dock_or_usb_adapter", "collect_link_events", "compare_switch_port_evidence_if_available"],
+      "hypotheses": ["cable_failure", "switch_port_failure", "dock_failure", "adapter_driver_failure", "negotiation_failure"],
+      "remediations": [
+        {"action": "guided_known_good_cable_or_port_test", "risk": "read_only", "approval": "user", "rollback": "restore_original_connection"},
+        {"action": "disable_enable_approved_adapter", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_adapter_state"},
+        {"action": "change_switch_port_or_network_configuration", "risk": "high", "approval": "network_administrator", "rollback": "restore_network_configuration"}
+      ],
+      "verification": ["ethernet_link_stable", "expected_network_reached", "target_business_function_works", "employee_confirms"]
+    },
+    {
+      "id": "WIN-NET-DHCP-001",
+      "name": "invalid_ip_dhcp_or_default_gateway",
+      "signals": ["apipa_address", "missing_gateway", "dhcp_timeout", "duplicate_ip", "wrong_subnet"],
+      "questions": ["Are other devices on the same network affected?", "Is the device configured for DHCP or an approved static address?", "Did the device recently move location?"],
+      "diagnostics": ["inspect_ip_configuration", "inspect_dhcp_state", "inspect_default_gateway", "inspect_routes", "detect_duplicate_ip", "compare_approved_network_profile"],
+      "hypotheses": ["dhcp_unavailable", "stale_lease", "static_configuration_error", "duplicate_ip", "wrong_vlan", "gateway_failure"],
+      "remediations": [
+        {"action": "renew_dhcp_lease", "risk": "low", "approval": "user_or_policy", "rollback": "reacquire_previous_or_new_lease"},
+        {"action": "restore_approved_dhcp_configuration", "risk": "medium", "approval": "engineer", "rollback": "restore_ip_configuration_snapshot"},
+        {"action": "change_static_ip_vlan_or_dhcp_scope", "risk": "high", "approval": "network_administrator", "rollback": "restore_network_configuration"}
+      ],
+      "verification": ["valid_ip_gateway_and_routes", "gateway_reachable", "target_business_function_works", "employee_confirms"]
+    },
+    {
+      "id": "WIN-NET-DNS-001",
+      "name": "dns_resolution_failure",
+      "signals": ["hostname_fails_ip_works", "dns_timeout", "wrong_dns_server", "stale_cache", "split_dns_failure"],
+      "questions": ["Does the service work by approved IP but not hostname?", "Are internal, external or both names affected?", "Does the failure occur only on VPN?"],
+      "diagnostics": ["inspect_dns_servers", "resolve_approved_test_names", "compare_name_and_ip_connectivity", "inspect_dns_cache_metadata", "inspect_nrpt_and_vpn_context", "collect_dns_client_events"],
+      "hypotheses": ["stale_dns_cache", "unreachable_dns_server", "wrong_dns_configuration", "split_dns_or_nrpt_failure", "vpn_dns_failure", "server_side_record_failure"],
+      "remediations": [
+        {"action": "flush_dns_cache", "risk": "low", "approval": "user_or_policy", "rollback": "cache_repopulates"},
+        {"action": "renew_dhcp_dns_configuration", "risk": "low", "approval": "user_or_policy", "rollback": "reacquire_lease"},
+        {"action": "change_dns_nrpt_or_server_record", "risk": "high", "approval": "network_or_dns_administrator", "rollback": "restore_dns_configuration"}
+      ],
+      "verification": ["approved_names_resolve_correctly", "target_ports_reachable", "target_business_function_works", "employee_confirms"]
+    },
+    {
+      "id": "WIN-NET-PROXY-001",
+      "name": "proxy_pac_or_winhttp_mismatch",
+      "signals": ["proxy_auth_error", "pac_unreachable", "browser_works_app_fails", "winhttp_mismatch", "service_bypass_failure"],
+      "questions": ["Do browser and desktop applications behave differently?", "Is the proxy configured manually, automatically or by policy?", "Does the issue occur off the corporate network?"],
+      "diagnostics": ["inspect_user_proxy", "inspect_winhttp_proxy", "inspect_policy_source", "test_pac_reachability", "test_approved_service_through_expected_path", "redact_proxy_identity_data"],
+      "hypotheses": ["pac_unreachable", "user_winhttp_mismatch", "stale_manual_proxy", "proxy_authentication_failure", "missing_bypass", "managed_policy_issue"],
+      "remediations": [
+        {"action": "refresh_approved_pac_detection", "risk": "low", "approval": "user_or_policy", "rollback": "restore_previous_detection_state"},
+        {"action": "restore_approved_user_proxy_snapshot", "risk": "medium", "approval": "engineer", "rollback": "restore_previous_proxy_snapshot"},
+        {"action": "change_pac_winhttp_or_enterprise_proxy_policy", "risk": "high", "approval": "network_or_endpoint_administrator", "rollback": "restore_proxy_policy"}
+      ],
+      "verification": ["expected_proxy_path_confirmed", "approved_service_reachable", "target_business_function_works", "employee_confirms"]
+    },
+    {
+      "id": "WIN-NET-VPN-001",
+      "name": "vpn_connection_or_tunnel_failure",
+      "signals": ["vpn_auth_failure", "tunnel_not_established", "error_720", "certificate_error", "connected_no_internal_access"],
+      "questions": ["Which approved VPN profile is affected?", "Does internet access work before connecting?", "What error code is displayed?"],
+      "diagnostics": ["inspect_vpn_profile_without_secrets", "collect_bounded_rasclient_or_vendor_events", "inspect_certificate_metadata_without_private_keys", "inspect_routes_and_dns_before_after", "test_approved_gateway_reachability"],
+      "hypotheses": ["internet_precondition_failure", "profile_or_protocol_mismatch", "certificate_or_identity_issue", "wan_miniport_failure", "vpn_gateway_outage", "route_or_dns_injection_failure"],
+      "remediations": [
+        {"action": "disconnect_and_reconnect_approved_vpn", "risk": "low", "approval": "user", "rollback": "disconnect_vpn"},
+        {"action": "reprovision_managed_vpn_profile", "risk": "high", "approval": "network_or_endpoint_administrator", "rollback": "restore_managed_profile"},
+        {"action": "change_vpn_identity_certificate_or_gateway", "risk": "high", "approval": "identity_or_network_administrator", "rollback": "administrator_defined"}
+      ],
+      "verification": ["vpn_tunnel_established", "expected_routes_and_dns_present", "approved_internal_service_reachable", "target_business_function_works", "employee_confirms"]
+    },
+    {
+      "id": "WIN-NET-ROUTE-001",
+      "name": "routing_or_target_port_connectivity_failure",
+      "signals": ["gateway_reachable_target_unreachable", "wrong_route", "port_timeout", "asymmetric_vpn_path"],
+      "questions": ["Which approved host and service are unavailable?", "Does the issue occur with or without VPN?", "Are other users on the same network affected?"],
+      "diagnostics": ["inspect_routes", "trace_approved_target", "test_specific_protocol_port", "compare_vpn_routes", "compare_site_impact", "request_firewall_or_server_evidence"],
+      "hypotheses": ["missing_route", "wrong_route_metric", "vpn_route_conflict", "network_acl_or_firewall_block", "target_service_down"],
+      "remediations": [
+        {"action": "refresh_approved_connection_or_vpn_routes", "risk": "low", "approval": "user_or_policy", "rollback": "reconnect_previous_state"},
+        {"action": "change_persistent_route_acl_or_firewall", "risk": "high", "approval": "network_or_security_administrator", "rollback": "restore_network_configuration"}
+      ],
+      "verification": ["expected_route_selected", "target_protocol_port_reachable", "target_business_function_works", "employee_confirms"]
+    },
+    {
+      "id": "WIN-NET-FIREWALL-001",
+      "name": "firewall_or_endpoint_security_block_suspected",
+      "signals": ["specific_port_blocked", "security_event", "application_block_notification", "works_on_other_managed_device"],
+      "questions": ["Which application and destination are blocked?", "Was a security policy recently changed?", "Is there a corresponding security notification or ticket?"],
+      "diagnostics": ["inspect_firewall_profile_and_policy_read_only", "collect_bounded_block_events", "verify_application_identity", "test_specific_approved_port", "compare_compliant_peer_evidence"],
+      "hypotheses": ["intended_security_block", "missing_approved_rule", "wrong_network_profile", "application_identity_changed", "target_service_down"],
+      "remediations": [
+        {"action": "correct_user_selectable_network_profile_when_policy_allows", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_network_profile"},
+        {"action": "change_firewall_edr_or_security_policy", "risk": "high", "approval": "security_administrator", "rollback": "restore_security_policy"}
+      ],
+      "verification": ["security_policy_remains_enabled", "approved_flow_reachable", "target_business_function_works", "employee_confirms"]
+    },
+    {
+      "id": "WIN-SVC-001",
+      "name": "approved_windows_service_stopped_or_unstable",
+      "signals": ["service_stopped", "recovery_loop", "dependency_failure", "service_timeout"],
+      "questions": ["Which business function is failing?", "When did the service last run normally?", "Was the device or application recently updated?"],
+      "diagnostics": ["map_business_function_to_allowlisted_service", "inspect_service_and_dependencies", "collect_bounded_service_events", "inspect_recent_changes", "inspect_resource_state"],
+      "hypotheses": ["transient_service_failure", "dependency_failure", "configuration_or_policy_issue", "resource_pressure", "faulting_driver_or_application"],
+      "remediations": [
+        {"action": "restart_allowlisted_service_after_impact_check", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_previous_service_state"},
+        {"action": "change_service_startup_dependency_or_recovery_policy", "risk": "high", "approval": "privileged_engineer", "rollback": "restore_service_configuration_snapshot"}
+      ],
+      "verification": ["service_stable_for_policy_window", "dependencies_healthy", "target_business_function_works", "employee_confirms"]
+    },
+    {
+      "id": "WIN-PERF-001",
+      "name": "resource_pressure_affecting_support_domain",
+      "signals": ["high_cpu", "memory_pressure", "low_disk", "high_io", "application_timeout"],
+      "questions": ["Which application or action is slow?", "When did this begin?", "Is the device currently installing updates or running an approved heavy task?"],
+      "diagnostics": ["capture_bounded_cpu_memory_disk_snapshot", "identify_top_process_metadata", "inspect_disk_free_space", "inspect_update_activity", "correlate_target_application_latency"],
+      "hypotheses": ["resource_exhaustion", "disk_pressure", "update_activity", "runaway_process", "hardware_degradation"],
+      "remediations": [
+        {"action": "close_user_selected_noncritical_application", "risk": "low", "approval": "user", "rollback": "reopen_application"},
+        {"action": "remove_approved_temporary_files", "risk": "medium", "approval": "user_or_engineer", "rollback": "not_guaranteed"},
+        {"action": "terminate_service_or_security_process", "risk": "high", "approval": "privileged_engineer", "rollback": "restart_approved_process_or_service"}
+      ],
+      "verification": ["resource_metrics_within_policy", "target_latency_within_policy", "target_business_function_works", "employee_confirms"]
+    },
+    {
+      "id": "WIN-UPDATE-001",
+      "name": "windows_update_or_pending_restart_correlation",
+      "signals": ["pending_restart", "recent_kb_install", "update_failure", "post_update_regression", "out_of_support_build"],
+      "questions": ["Did the issue begin immediately after an update or restart?", "Is a restart pending?", "Are other devices on the same build affected?"],
+      "diagnostics": ["inspect_build_and_lifecycle", "inspect_update_history", "inspect_pending_restart", "check_known_issue_registry", "compare_peer_builds", "correlate_failure_time"],
+      "hypotheses": ["pending_restart", "known_update_regression", "failed_update", "unsupported_build", "unrelated_timing"],
+      "remediations": [
+        {"action": "schedule_user_approved_restart", "risk": "medium", "approval": "user", "rollback": "not_required"},
+        {"action": "install_approved_quality_update", "risk": "high", "approval": "endpoint_administrator", "rollback": "enterprise_update_rollback_plan"},
+        {"action": "uninstall_or_pause_managed_update", "risk": "high", "approval": "endpoint_and_security_administrator", "rollback": "restore_update_policy_and_package"}
+      ],
+      "verification": ["supported_build_or_exception_recorded", "restart_state_clear_or_scheduled", "target_business_function_works", "employee_confirms"]
+    }
+  ],
+  "prohibited_actions": [
+    "disable_firewall_or_edr_for_testing",
+    "display_or_export_wifi_password",
+    "display_or_export_vpn_secret",
+    "export_private_certificate_key",
+    "automatic_full_network_reset",
+    "automatic_driver_installation",
+    "arbitrary_service_restart",
+    "unapproved_packet_capture",
+    "persistent_route_dns_proxy_or_vpn_change_without_authority"
+  ],
+  "global_escalation_triggers": [
+    "suspected_security_incident",
+    "multiple_users_site_or_tenant_outage",
+    "firewall_edr_dns_dhcp_vpn_proxy_or_network_policy_change_required",
+    "hardware_or_cabling_failure",
+    "unsupported_windows_build",
+    "private_key_or_credential_exposure_risk",
+    "bounded_retry_limit_reached"
+  ]
+}

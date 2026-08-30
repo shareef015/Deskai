@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "required_scope_fields": [
+    "tenant_id",
+    "employee_id",
+    "device_id",
+    "incident_id",
+    "session_id",
+    "purpose",
+    "capabilities",
+    "issued_at",
+    "expires_at"
+  ],
+  "diagnostic_consent": {
+    "required": true,
+    "default_access": "read_only",
+    "must_precede_endpoint_session": true,
+    "may_be_declined": true,
+    "guided_support_fallback": true
+  },
+  "remediation_consent": {
+    "separate_from_diagnostics": true,
+    "action_specific": true,
+    "risk_based_human_approval": true,
+    "pre_state_required": true,
+    "rollback_plan_required_when_supported": true
+  },
+  "revocation": {
+    "user_can_revoke": true,
+    "automatic_on_session_end": true,
+    "automatic_on_expiry": true,
+    "automatic_on_identity_or_device_mismatch": true
+  }
+}

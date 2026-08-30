@@ -1,0 +1,1 @@
+{"version":"1.0.0","metrics":["sla_aging","incident_volume","recovery_rate","rag_quality","agent_latency"],"default_window_days":7,"refresh_seconds":60,"synthetic_live_mix_allowed":false,"chart_data_source":"typed_server_snapshot"}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "title": "DeskPilot AI Production LLMOps",
+  "panels": [
+    {"title":"AI request rate","metric":"deskpilot.operation.count","group_by":["stage","status"]},
+    {"title":"End-to-end p95 latency","metric":"deskpilot.ai.run.duration","aggregation":"p95"},
+    {"title":"RAG retrieval precision","metric":"deskpilot.eval.retrieval_precision","threshold":0.80},
+    {"title":"RAG retrieval recall","metric":"deskpilot.eval.retrieval_recall","threshold":0.80},
+    {"title":"Groundedness","metric":"deskpilot.eval.groundedness","threshold":0.95},
+    {"title":"Citation integrity","metric":"deskpilot.eval.citation_integrity","threshold":1.0},
+    {"title":"Agent route accuracy","metric":"deskpilot.eval.route_accuracy","threshold":0.95},
+    {"title":"MCP tool success","metric":"deskpilot.eval.tool_success","threshold":0.95},
+    {"title":"Prompt injection block rate","metric":"deskpilot.eval.prompt_injection_block_rate","threshold":1.0},
+    {"title":"Hallucination rate","metric":"deskpilot.eval.hallucination_rate","threshold_max":0.02},
+    {"title":"Token usage","metric":"deskpilot.llm.tokens","group_by":["model_family"]},
+    {"title":"Estimated model cost","metric":"deskpilot.llm.cost","aggregation":"sum"},
+    {"title":"HITL approval latency","metric":"deskpilot.hitl.approval.duration","aggregation":"p95"},
+    {"title":"Verification/closure accuracy","metric":"deskpilot.eval.closure_accuracy","threshold":0.95}
+  ]
+}

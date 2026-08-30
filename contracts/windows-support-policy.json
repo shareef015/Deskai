@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0.0",
+  "policy_as_of": "2026-08-25",
+  "lifecycle_authority": "https://learn.microsoft.com/windows/release-health/supported-versions-windows-client",
+  "refresh_interval_hours": 24,
+  "maximum_staleness_hours": 168,
+  "unknown_or_stale_policy_action": "diagnostics_only_and_engineer_review",
+  "platforms": {
+    "windows_10": {
+      "final_feature_release": "22H2",
+      "general_support_ended": "2025-10-14",
+      "allowed_editions": [
+        "Pro",
+        "Enterprise",
+        "Education",
+        "Enterprise LTSC",
+        "IoT Enterprise LTSC"
+      ],
+      "full_operation_requires_one_of": [
+        "verified_enterprise_esu",
+        "supported_ltsc_lifecycle"
+      ],
+      "without_esu_or_supported_ltsc": "restricted_support_and_migration_warning"
+    },
+    "windows_11": {
+      "allowed_editions": [
+        "Pro",
+        "Pro for Workstations",
+        "Enterprise",
+        "Education",
+        "Enterprise multi-session",
+        "Enterprise LTSC"
+      ],
+      "feature_release_rule": "must_be_supported_by_microsoft_for_detected_edition",
+      "unsupported_release_action": "diagnostics_only_and_upgrade_guidance"
+    }
+  },
+  "unsupported_platforms": [
+    "windows_7",
+    "windows_8",
+    "windows_8_1",
+    "windows_server_as_managed_employee_endpoint",
+    "macos",
+    "linux_desktop",
+    "chromeos",
+    "android",
+    "ios"
+  ]
+}

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: deskpilot-production
+  labels:
+    app.kubernetes.io/name: deskpilot-ai
+    app.kubernetes.io/environment: production

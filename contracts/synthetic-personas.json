@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "synthetic_only": true,
+  "tenant": {"id": "tenant-demo-kw", "name": "Northstar Demo Services", "country": "KW"},
+  "personas": [
+    {"id": "usr-001", "name": "Sara Ahmed", "department": "Finance", "role": "employee", "device_ids": ["WIN11-01"]},
+    {"id": "usr-002", "name": "Omar Saleh", "department": "Operations", "role": "employee", "device_ids": ["WIN10-01"]},
+    {"id": "usr-003", "name": "Mariam Khaled", "department": "Human Resources", "role": "employee", "device_ids": ["WIN11-02"]},
+    {"id": "usr-004", "name": "Yousef Ali", "department": "Sales", "role": "employee", "device_ids": ["WIN10-02"]},
+    {"id": "usr-005", "name": "Laila Hassan", "department": "Legal", "role": "employee", "device_ids": ["WIN11-03"]},
+    {"id": "usr-006", "name": "Fahad Nasser", "department": "Facilities", "role": "employee", "device_ids": ["WIN10-03"]},
+    {"id": "usr-007", "name": "Noor Ibrahim", "department": "Procurement", "role": "employee", "device_ids": ["WIN11-04"]},
+    {"id": "usr-008", "name": "Hamad Adel", "department": "Customer Care", "role": "employee", "device_ids": ["WIN10-04"]},
+    {"id": "usr-009", "name": "Dana Mahmoud", "department": "Marketing", "role": "employee", "device_ids": ["WIN11-05"]},
+    {"id": "usr-010", "name": "Khaled Sami", "department": "Warehouse", "role": "employee", "device_ids": ["WIN10-05"]},
+    {"id": "usr-011", "name": "Aisha Rahman", "department": "Finance", "role": "employee", "device_ids": ["WIN11-01"]},
+    {"id": "usr-012", "name": "Majed Abbas", "department": "Operations", "role": "employee", "device_ids": ["WIN10-01"]},
+    {"id": "usr-013", "name": "Reem Qasim", "department": "Executive", "role": "employee", "device_ids": ["WIN11-02"]},
+    {"id": "usr-014", "name": "Tariq Amin", "department": "Sales", "role": "employee", "device_ids": ["WIN10-02"]},
+    {"id": "usr-015", "name": "Huda Jamal", "department": "Legal", "role": "employee", "device_ids": ["WIN11-03"]},
+    {"id": "usr-016", "name": "Rashid Karim", "department": "IT Support", "role": "service_desk_engineer", "device_ids": []},
+    {"id": "usr-017", "name": "Salma Yusuf", "department": "IT Support", "role": "service_desk_engineer", "device_ids": []},
+    {"id": "usr-018", "name": "Nabil Faris", "department": "IT Engineering", "role": "l2_l3_specialist", "device_ids": []},
+    {"id": "usr-019", "name": "Mona Habib", "department": "Change Control", "role": "remediation_approver", "device_ids": []},
+    {"id": "usr-020", "name": "Adel Mansour", "department": "Endpoint Engineering", "role": "endpoint_administrator", "device_ids": []},
+    {"id": "usr-021", "name": "Rana Saeed", "department": "Network Engineering", "role": "network_administrator", "device_ids": []},
+    {"id": "usr-022", "name": "Samir Zaki", "department": "Identity and Messaging", "role": "identity_exchange_administrator", "device_ids": []},
+    {"id": "usr-023", "name": "Noura Faisal", "department": "Cybersecurity", "role": "security_administrator", "device_ids": []},
+    {"id": "usr-024", "name": "Basel Hamza", "department": "Platform Administration", "role": "tenant_administrator", "device_ids": []},
+    {"id": "usr-025", "name": "Amal Dawood", "department": "Internal Audit", "role": "auditor", "device_ids": []}
+  ],
+  "demo_assignments": [
+    {"incident_domain": "outlook", "employee_id": "usr-001", "engineer_id": "usr-016", "specialist_id": "usr-018", "approver_id": "usr-019"},
+    {"incident_domain": "printer", "employee_id": "usr-006", "engineer_id": "usr-017", "specialist_id": "usr-018", "approver_id": "usr-019"},
+    {"incident_domain": "scanner", "employee_id": "usr-007", "engineer_id": "usr-016", "specialist_id": "usr-018", "approver_id": "usr-019"},
+    {"incident_domain": "network", "employee_id": "usr-009", "engineer_id": "usr-017", "specialist_id": "usr-018", "approver_id": "usr-021"}
+  ]
+}

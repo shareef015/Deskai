@@ -1,0 +1,1 @@
+{"schema_version":"1.0","requirements":{"tenant_scoped":true,"live_synthetic_isolated":true,"role_gated":true,"bounded_window":true,"typed_units":true,"deterministic_series":true,"accessible_chart_summaries":true,"no_color_only_encoding":true,"zero_baseline_for_counts":true,"freshness_visible":true},"maximum_window_days":90,"maximum_points_per_series":100}

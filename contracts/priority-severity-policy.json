@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "policy_version": "priority-v1",
+  "authority": "deterministic_policy_engine",
+  "client_supplied_final_priority_allowed": false,
+  "llm_supplied_final_priority_allowed": false,
+  "inputs": {
+    "impact_score": {"minimum": 1, "maximum": 5},
+    "urgency_score": {"minimum": 1, "maximum": 5},
+    "affected_user_count": {"minimum": 1, "maximum": 100000},
+    "business_critical_service": "boolean",
+    "security_or_safety_risk": "boolean",
+    "complete_site_outage": "boolean"
+  },
+  "matrix": [
+    {"score_min": 9, "priority": 1, "severity": "sev1"},
+    {"score_min": 7, "priority": 2, "severity": "sev2"},
+    {"score_min": 5, "priority": 3, "severity": "sev3"},
+    {"score_min": 3, "priority": 4, "severity": "sev4"},
+    {"score_min": 2, "priority": 5, "severity": "sev5"}
+  ],
+  "hard_escalators": ["security_or_safety_risk", "complete_site_outage"],
+  "rules": [
+    "vip_status_alone_never_increases_priority",
+    "affected_user_count_is_bounded_and_verified",
+    "unknown_impact_does_not_default_to_low",
+    "classification_records_policy_version_and_reason_codes",
+    "reclassification_uses_optimistic_concurrency"
+  ],
+  "override": {
+    "human_authorization_required": true,
+    "reason_required": true,
+    "original_and_override_preserved": true,
+    "expiry_required": true,
+    "audit_required": true,
+    "llm_may_override": false
+  }
+}

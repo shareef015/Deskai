@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "component_id": "synthetic_knowledge_base",
+  "purpose": "Deterministic synthetic troubleshooting corpus that the governed RAG pipeline retrieves from to produce grounded, cited answers. No real customer content.",
+  "dataset": "data/synthetic/knowledge-base.json",
+  "generator": "data/synthetic/generate_knowledge_base.py",
+  "tenant_id": "tenant-demo-kw",
+  "requirements": {
+    "synthetic_only": true,
+    "deterministic": true,
+    "tenant_scoped": true,
+    "every_chunk_cites_a_registered_source": true,
+    "chunk_text_content_digest": true,
+    "corpus_digest": true,
+    "no_secret_or_credential_extraction_guidance": true,
+    "no_arbitrary_shell_or_powershell_guidance": true,
+    "no_hidden_or_persistent_remote_access_guidance": true,
+    "read_only_diagnosis_before_change": true,
+    "mutating_step_requires_approval_and_rollback": true,
+    "closure_requires_technical_verification_and_employee_confirmation": true,
+    "windows_10_restricted_without_esu_or_ltsc": true
+  },
+  "coverage": {
+    "domains": ["outlook", "printer", "scanner", "windows_network"],
+    "minimum_articles_per_domain": 5,
+    "source_contracts": [
+      "contracts/knowledge-sources.json",
+      "contracts/printer-knowledge-sources.json",
+      "contracts/scanner-knowledge-sources.json",
+      "contracts/windows-network-knowledge-sources.json"
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "seed": 20260826,
+  "scenarios": [
+    {"id": "SYN-PRN-001", "device": "WIN10-03", "incident": "PRINT-QUEUE-001", "root_cause": "corrupt_job", "expected_risk": "low", "expected_outcome": "owner_approved_job_cancel_and_test_print"},
+    {"id": "SYN-PRN-002", "device": "WIN10-04", "incident": "PRINT-SPOOLER-001", "root_cause": "corrupt_spool_file", "expected_risk": "medium", "expected_outcome": "approved_queue_clear_spooler_restart_and_test"},
+    {"id": "SYN-PRN-003", "device": "WIN11-03", "incident": "PRINT-PORT-001", "root_cause": "stale_ip_address", "expected_risk": "medium", "expected_outcome": "approved_port_update_and_test_print"},
+    {"id": "SYN-PRN-004", "device": "WIN11-04", "incident": "PRINT-OFFLINE-001", "root_cause": "paused_queue", "expected_risk": "low", "expected_outcome": "queue_resumed_and_output_confirmed"},
+    {"id": "SYN-PRN-005", "device": "WIN11-05", "incident": "PRINT-PROTECTED-001", "root_cause": "third_party_driver_removed_by_design", "expected_risk": "medium", "expected_outcome": "compatible_windows_ready_print_mapping"},
+    {"id": "SYN-PRN-006", "device": "WIN10-01", "incident": "PRINT-SERVER-001", "root_cause": "server_outage", "expected_risk": "read_only", "expected_outcome": "escalated_to_print_server_administrator"},
+    {"id": "SYN-PRN-007", "device": "WIN10-02", "incident": "PRINT-DRIVER-001", "root_cause": "wrong_model_driver", "expected_risk": "high", "expected_outcome": "privileged_driver_change_with_rollback"},
+    {"id": "SYN-PRN-008", "device": "WIN11-01", "incident": "PRINT-PERMISSION-001", "root_cause": "missing_entitlement", "expected_risk": "high", "expected_outcome": "escalated_for_permission_approval"},
+    {"id": "SYN-PRN-009", "device": "WIN11-02", "incident": "PRINT-PERF-001", "root_cause": "quality_setting", "expected_risk": "low", "expected_outcome": "preference_corrected_and_output_verified"},
+    {"id": "SYN-PRN-010", "device": "WIN10-05", "incident": "PRINT-POWER-001", "root_cause": "mechanical_failure", "expected_risk": "read_only", "expected_outcome": "physical_service_escalation"}
+  ]
+}

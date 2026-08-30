@@ -1,0 +1,96 @@
+name: final-production-promotion
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_image_digest:
+        description: "Connected staging-certified API image digest (sha256:...)"
+        required: true
+      frontend_image_digest:
+        description: "Connected staging-certified frontend image digest (sha256:...)"
+        required: true
+      execute_production_promotion:
+        description: "Run human-approved production promotion"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deskpilot-production-promotion
+  cancel-in-progress: false
+
+env:
+  PYTHONPATH: backend/src
+
+jobs:
+  prerequisite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Require resolver-generated frontend lockfile
+        run: test -f frontend/package-lock.json
+      - name: Cumulative deterministic regression
+        run: |
+          python -m compileall -q backend/src backend/tests backend/scripts
+          python -m unittest discover -s backend/tests -p 'test_*.py' -v
+      - name: Require Connected staging connected PASS
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('backend/staging/reports/CONNECTED_STAGING_CERTIFICATION.json')
+          data = json.loads(p.read_text())
+          cert = data.get('certificate', {})
+          assert cert.get('passed') is True and cert.get('decision') == 'pass', 'Connected staging connected staging is not PASS'
+          PY
+      - name: Validate immutable image digests
+        env:
+          API_DIGEST: ${{ inputs.api_image_digest }}
+          FRONTEND_DIGEST: ${{ inputs.frontend_image_digest }}
+        run: |
+          echo "$API_DIGEST" | grep -Eq '^sha256:[0-9a-f]{64}$'
+          echo "$FRONTEND_DIGEST" | grep -Eq '^sha256:[0-9a-f]{64}$'
+      - name: Render production manifests
+        run: kubectl kustomize infra/k8s/production > /tmp/deskpilot-production.yaml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: production-production-preflight
+          path: /tmp/deskpilot-production.yaml
+
+  production-promotion:
+    if: ${{ inputs.execute_production_promotion == true }}
+    needs: prerequisite
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Configure production kubeconfig
+        shell: bash
+        env:
+          KUBECONFIG_B64: ${{ secrets.DESKPILOT_PRODUCTION_KUBECONFIG_B64 }}
+        run: |
+          test -n "$KUBECONFIG_B64"
+          echo "$KUBECONFIG_B64" | base64 -d > "$RUNNER_TEMP/kubeconfig"
+          chmod 600 "$RUNNER_TEMP/kubeconfig"
+          echo "KUBECONFIG=$RUNNER_TEMP/kubeconfig" >> "$GITHUB_ENV"
+      - name: Require production namespace
+        run: kubectl get namespace deskpilot-production
+      - name: Require production evidence file
+        run: test -f backend/production/evidence/production-go-live-evidence.json
+      - name: Final certificate must pass after human-approved release window
+        run: python backend/scripts/run_production_certification.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: production-final-production-certificate
+          path: |
+            backend/production/evidence/
+            backend/production/reports/

@@ -1,0 +1,48 @@
+name: final-e2e-certification
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  backend-final-certification:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run cumulative backend regression
+        working-directory: backend
+        run: python -m unittest discover -s tests -p 'test_*.py'
+      - name: Run final recruiter-demo certificate
+        working-directory: backend
+        run: python scripts/run_e2e_certification.py
+
+  frontend-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Require resolver-generated lockfile
+        run: test -f frontend/package-lock.json
+      - name: Install exact dependency graph
+        working-directory: frontend
+        run: npm ci
+      - name: Typecheck
+        working-directory: frontend
+        run: npm run typecheck
+      - name: Unit and accessibility tests
+        working-directory: frontend
+        run: npm test -- --runInBand
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+      - name: Recruiter demo browser flow
+        working-directory: frontend
+        run: npx playwright test tests/e2e/recruiter-demo.spec.ts tests/e2e/keyboard-critical-flow.spec.ts tests/e2e/axe-smoke.spec.ts

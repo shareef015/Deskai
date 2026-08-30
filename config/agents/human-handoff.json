@@ -1,0 +1,1 @@
+{"config_version":"1.0.0","queue_roles":["service_desk_engineer","operator","resolver"],"acknowledgement_role":"resolver","custody":"single_owner","actor_display":"hashed_in_audit","human_change_requires_verification":true,"return_route":"agent_supervisor"}

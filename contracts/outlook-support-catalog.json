@@ -1,0 +1,203 @@
+{
+  "schema_version": "1.0.0",
+  "platform": "windows_only",
+  "clients": {
+    "classic_outlook": {
+      "process": "outlook.exe",
+      "supported_channels": ["microsoft_365_apps", "outlook_2024", "outlook_2021"],
+      "capabilities": ["com_add_ins", "profiles", "ost", "pst", "windows_search"]
+    },
+    "new_outlook": {
+      "process": "olk.exe",
+      "supported_channels": ["service_delivered_windows_app"],
+      "capability_policy": "detected_feature_required",
+      "excluded_classic_assumptions": ["com_add_ins", "classic_profiles", "scanpst_for_app_cache"]
+    }
+  },
+  "diagnostic_evidence_precedence": [
+    "verified_endpoint_state",
+    "microsoft_365_service_health",
+    "outlook_and_windows_event_evidence",
+    "approved_connectivity_test",
+    "employee_observation",
+    "version_matched_knowledge",
+    "historical_case_similarity"
+  ],
+  "risk_levels": {
+    "read_only": "no_endpoint_change",
+    "low": "reversible_session_or_process_change",
+    "medium": "persistent_user_configuration_or_local_cache_change",
+    "high": "data_file_profile_registry_identity_or_privileged_tenant_change"
+  },
+  "incidents": [
+    {
+      "id": "OUTLOOK-START-001",
+      "name": "will_not_start",
+      "clients": ["classic_outlook", "new_outlook"],
+      "signals": ["process_exits", "no_window", "startup_error", "processing_screen"],
+      "questions": ["Which Outlook client are you opening?", "What exact message is shown?", "When did Outlook last open successfully?"],
+      "diagnostics": ["detect_client", "inspect_process", "collect_app_events", "check_recent_updates", "check_disk_space", "safe_mode_if_classic"],
+      "hypotheses": ["add_in_failure", "damaged_installation", "profile_failure", "data_file_failure", "known_update_issue"],
+      "remediations": [
+        {"action": "restart_outlook", "risk": "low", "approval": "policy_or_user", "rollback": "not_required"},
+        {"action": "disable_confirmed_faulting_add_in", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_add_in_state"},
+        {"action": "repair_office_installation", "risk": "medium", "approval": "engineer", "rollback": "repair_log_and_reinstall_path"}
+      ],
+      "verification": ["client_opens", "mailbox_view_loads", "no_new_crash_event", "employee_confirms"]
+    },
+    {
+      "id": "OUTLOOK-CRASH-001",
+      "name": "crash_freeze_or_not_responding",
+      "clients": ["classic_outlook", "new_outlook"],
+      "signals": ["application_hang", "crash_event", "not_responding", "repeated_safe_mode_offer"],
+      "questions": ["Does it fail during startup or during a specific action?", "Does the problem occur in safe mode?", "Was an add-in or Office update recently installed?"],
+      "diagnostics": ["collect_app_hang_events", "collect_crash_module", "safe_mode_if_classic", "enumerate_add_ins_if_classic", "check_build_known_issues"],
+      "hypotheses": ["com_add_in_conflict", "office_build_regression", "profile_corruption", "data_file_corruption", "resource_pressure"],
+      "remediations": [
+        {"action": "restart_outlook", "risk": "low", "approval": "policy_or_user", "rollback": "not_required"},
+        {"action": "disable_confirmed_faulting_add_in", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_add_in_state"},
+        {"action": "repair_office_installation", "risk": "medium", "approval": "engineer", "rollback": "repair_log_and_reinstall_path"}
+      ],
+      "verification": ["client_remains_responsive", "failed_action_repeated_successfully", "no_new_crash_event", "employee_confirms"]
+    },
+    {
+      "id": "OUTLOOK-CONNECT-001",
+      "name": "disconnected_or_trying_to_connect",
+      "clients": ["classic_outlook", "new_outlook"],
+      "signals": ["disconnected", "trying_to_connect", "work_offline", "server_unavailable"],
+      "questions": ["Can you open other Microsoft 365 services?", "Are you connected through VPN or proxy?", "Are other employees affected?"],
+      "diagnostics": ["check_service_health", "check_work_offline_state", "test_dns", "inspect_proxy", "inspect_vpn", "test_m365_endpoints", "run_approved_connectivity_diagnostic"],
+      "hypotheses": ["service_outage", "work_offline_enabled", "dns_failure", "proxy_or_vpn_failure", "endpoint_network_failure", "account_configuration_failure"],
+      "remediations": [
+        {"action": "disable_work_offline", "risk": "low", "approval": "user", "rollback": "restore_previous_state"},
+        {"action": "refresh_approved_network_state", "risk": "low", "approval": "policy_or_user", "rollback": "not_required"},
+        {"action": "modify_proxy_or_vpn_configuration", "risk": "high", "approval": "network_administrator", "rollback": "restore_configuration_snapshot"}
+      ],
+      "verification": ["connected_state", "folder_sync_advances", "send_receive_test", "employee_confirms"]
+    },
+    {
+      "id": "OUTLOOK-AUTH-001",
+      "name": "repeated_password_or_authentication_prompt",
+      "clients": ["classic_outlook", "new_outlook"],
+      "signals": ["password_prompt", "sign_in_required", "modern_auth_failure", "token_acquisition_error"],
+      "questions": ["Can you sign in to Microsoft 365 in a browser?", "Did your password or MFA method recently change?", "Does this affect another Microsoft 365 app?"],
+      "diagnostics": ["check_service_health", "check_device_time", "inspect_auth_events_without_secrets", "run_admin_auth_diagnostic", "compare_browser_sign_in"],
+      "hypotheses": ["service_issue", "clock_skew", "conditional_access_or_mfa_issue", "identity_issue", "corrupt_local_auth_state"],
+      "remediations": [
+        {"action": "restart_client_and_retry_modern_auth", "risk": "low", "approval": "user", "rollback": "not_required"},
+        {"action": "clear_approved_nonsecret_auth_cache", "risk": "medium", "approval": "engineer", "rollback": "user_reauthentication_required"},
+        {"action": "reset_identity_mfa_or_conditional_access", "risk": "high", "approval": "identity_administrator", "rollback": "administrator_defined"}
+      ],
+      "verification": ["authentication_succeeds", "prompt_does_not_repeat", "send_receive_test", "employee_confirms"]
+    },
+    {
+      "id": "OUTLOOK-SYNC-001",
+      "name": "send_receive_or_folder_sync_failure",
+      "clients": ["classic_outlook", "new_outlook"],
+      "signals": ["send_receive_error", "folders_not_updating", "message_stuck_outbox", "sync_error"],
+      "questions": ["Can you send and receive in Outlook on the web?", "Is one folder affected or the entire mailbox?", "What is the error code and last successful sync time?"],
+      "diagnostics": ["check_service_health", "compare_web_mailbox", "collect_sync_errors", "inspect_outbox_without_content", "check_mailbox_quota", "test_connectivity"],
+      "hypotheses": ["service_outage", "local_sync_state", "oversized_or_blocked_message", "mailbox_quota", "network_failure", "server_side_mail_flow"],
+      "remediations": [
+        {"action": "trigger_send_receive", "risk": "low", "approval": "policy_or_user", "rollback": "not_required"},
+        {"action": "move_user_selected_stuck_message_to_drafts", "risk": "medium", "approval": "user", "rollback": "return_message_to_outbox"},
+        {"action": "change_exchange_mail_flow", "risk": "high", "approval": "exchange_administrator", "rollback": "administrator_defined"}
+      ],
+      "verification": ["test_message_sent", "test_message_received", "folder_sync_timestamp_advances", "employee_confirms"]
+    },
+    {
+      "id": "OUTLOOK-OST-001",
+      "name": "ost_cache_corruption_or_stale_cache",
+      "clients": ["classic_outlook"],
+      "signals": ["cannot_open_folders", "ost_error", "persistent_sync_mismatch", "local_items_stale"],
+      "questions": ["Is the mailbox correct in Outlook on the web?", "Are unsynchronized local items present?", "Is this an Exchange or Microsoft 365 account?"],
+      "diagnostics": ["confirm_server_copy", "locate_ost", "check_file_size", "check_disk_space", "collect_sync_errors", "confirm_outlook_closed"],
+      "hypotheses": ["corrupt_ost", "disk_pressure", "incomplete_sync", "profile_failure"],
+      "remediations": [
+        {"action": "recreate_ost_after_server_copy_confirmation", "risk": "medium", "approval": "user_and_engineer", "rollback": "retain_quarantined_original_until_verified"}
+      ],
+      "verification": ["ost_recreated", "initial_sync_completed_or_progressing", "folder_counts_sampled", "send_receive_test", "employee_confirms"]
+    },
+    {
+      "id": "OUTLOOK-PST-001",
+      "name": "pst_data_file_failure",
+      "clients": ["classic_outlook", "new_outlook"],
+      "signals": ["cannot_open_data_file", "data_file_error", "missing_archive", "scanpst_errors"],
+      "questions": ["Is this file the only copy of the data?", "Is the PST stored in a synchronized folder?", "When was the last successful backup?"],
+      "diagnostics": ["locate_pst", "check_file_access", "check_backup", "check_storage_location", "scan_without_repair", "confirm_outlook_closed"],
+      "hypotheses": ["file_corruption", "permission_failure", "sync_folder_conflict", "storage_failure"],
+      "remediations": [
+        {"action": "repair_pst_with_backup", "risk": "high", "approval": "user_and_engineer", "rollback": "restore_backup_or_bak_file"},
+        {"action": "move_pst_out_of_sync_folder", "risk": "high", "approval": "user_and_engineer", "rollback": "restore_original_location_and_mapping"}
+      ],
+      "verification": ["data_file_opens", "recovered_folders_reviewed", "sample_items_accessible", "employee_confirms"]
+    },
+    {
+      "id": "OUTLOOK-PROFILE-001",
+      "name": "profile_corruption",
+      "clients": ["classic_outlook"],
+      "signals": ["profile_load_error", "account_settings_failure", "persistent_client_only_failure"],
+      "questions": ["Does Outlook on the web work?", "Are additional accounts, PST files, signatures or settings attached to this profile?", "Is another Outlook profile available?"],
+      "diagnostics": ["inventory_profile_without_secrets", "inventory_accounts", "inventory_data_files", "inventory_signatures", "compare_web_mailbox", "test_new_profile_non_destructively"],
+      "hypotheses": ["profile_corruption", "account_mapping_error", "data_file_dependency"],
+      "remediations": [
+        {"action": "create_and_test_parallel_profile", "risk": "medium", "approval": "user_and_engineer", "rollback": "restore_previous_default_profile"},
+        {"action": "delete_existing_profile", "risk": "high", "approval": "privileged_engineer", "rollback": "recreate_from_captured_inventory"}
+      ],
+      "verification": ["new_profile_opens", "accounts_present", "data_files_reconnected_as_approved", "send_receive_test", "employee_confirms"]
+    },
+    {
+      "id": "OUTLOOK-SEARCH-001",
+      "name": "search_missing_or_incomplete_results",
+      "clients": ["classic_outlook", "new_outlook"],
+      "signals": ["recent_mail_missing", "incomplete_results", "indexing_in_progress", "search_error"],
+      "questions": ["Are results missing for all folders or one folder?", "Does Outlook on the web find the item?", "Is indexing still in progress?"],
+      "diagnostics": ["detect_client", "compare_web_search", "check_windows_search_if_classic", "check_index_scope_if_classic", "check_index_status", "check_known_issues"],
+      "hypotheses": ["windows_index_incomplete", "index_scope_error", "service_side_search_issue", "known_build_issue", "sync_incomplete"],
+      "remediations": [
+        {"action": "correct_index_scope", "risk": "medium", "approval": "engineer", "rollback": "restore_scope_snapshot"},
+        {"action": "rebuild_windows_search_index", "risk": "medium", "approval": "user_or_engineer", "rollback": "not_practical_reindex_required"}
+      ],
+      "verification": ["indexing_completed_or_progressing", "known_test_items_found", "employee_confirms"]
+    },
+    {
+      "id": "OUTLOOK-SHARED-001",
+      "name": "shared_mailbox_or_calendar_problem",
+      "clients": ["classic_outlook", "new_outlook"],
+      "signals": ["shared_mailbox_missing", "shared_folder_not_syncing", "calendar_permission_error", "delegation_failure"],
+      "questions": ["Does the resource open in Outlook on the web?", "Are other authorized users affected?", "Was access recently granted or changed?"],
+      "diagnostics": ["verify_client_mapping", "compare_web_access", "check_sync_state", "request_admin_permission_evidence", "check_service_health"],
+      "hypotheses": ["client_mapping_failure", "cached_sync_failure", "missing_or_delayed_permission", "service_issue"],
+      "remediations": [
+        {"action": "remove_and_readd_verified_shared_mapping", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_mapping"},
+        {"action": "change_mailbox_or_calendar_permission", "risk": "high", "approval": "exchange_administrator", "rollback": "restore_permission_snapshot"}
+      ],
+      "verification": ["resource_opens", "authorized_actions_work", "sync_timestamp_advances", "employee_confirms"]
+    },
+    {
+      "id": "OUTLOOK-PERF-001",
+      "name": "slow_performance",
+      "clients": ["classic_outlook", "new_outlook"],
+      "signals": ["slow_start", "slow_folder_switch", "delayed_typing", "high_resource_use"],
+      "questions": ["Which action is slow?", "Is the problem present in safe mode?", "Is the mailbox or data file unusually large?"],
+      "diagnostics": ["measure_startup", "inspect_resource_pressure", "safe_mode_if_classic", "inventory_add_ins_if_classic", "check_data_file_size", "test_network_latency"],
+      "hypotheses": ["add_in_overhead", "large_data_file", "resource_pressure", "network_latency", "damaged_installation"],
+      "remediations": [
+        {"action": "disable_confirmed_faulting_add_in", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_add_in_state"},
+        {"action": "compact_data_file_after_backup", "risk": "high", "approval": "user_and_engineer", "rollback": "restore_backup"},
+        {"action": "repair_office_installation", "risk": "medium", "approval": "engineer", "rollback": "repair_log_and_reinstall_path"}
+      ],
+      "verification": ["startup_or_action_latency_within_policy", "normal_operation_sample", "employee_confirms"]
+    }
+  ],
+  "global_escalation_triggers": [
+    "suspected_security_incident",
+    "multiple_users_or_service_outage",
+    "identity_or_conditional_access_change_required",
+    "exchange_permission_or_mail_flow_change_required",
+    "unsupported_client_or_windows_build",
+    "possible_irrecoverable_local_data_loss",
+    "diagnostic_confidence_below_threshold",
+    "bounded_retry_limit_reached"
+  ]
+}

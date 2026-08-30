@@ -1,0 +1,180 @@
+{
+  "schema_version": "1.0.0",
+  "platform": "windows_10_and_11",
+  "protocols": ["usb", "tcp_9100", "ipp", "ipps", "wsd", "smb_print_share"],
+  "evidence_order": [
+    "employee_physical_observation",
+    "windows_printer_inventory",
+    "queue_and_job_state",
+    "spooler_and_printservice_events",
+    "port_and_network_reachability",
+    "print_server_state",
+    "driver_and_protection_mode_compatibility",
+    "version_matched_knowledge"
+  ],
+  "risk_levels": {
+    "read_only": "no_endpoint_change",
+    "low": "reversible_queue_or_session_change",
+    "medium": "persistent_printer_mapping_port_or_spooler_change",
+    "high": "driver_security_policy_server_or_privileged_change"
+  },
+  "incidents": [
+    {
+      "id": "PRINT-POWER-001",
+      "name": "physical_power_or_device_error",
+      "signals": ["no_display", "device_error_light", "paper_jam", "cover_open", "low_toner_or_ink"],
+      "questions": ["Is the printer powered on?", "What is displayed on the printer panel?", "Are paper, toner, ink and covers in normal condition?"],
+      "diagnostics": ["request_physical_observation", "inspect_windows_status_read_only", "check_other_users"],
+      "hypotheses": ["no_power", "paper_jam", "consumable_empty", "cover_open", "mechanical_failure"],
+      "remediations": [{"action": "guided_physical_check", "risk": "read_only", "approval": "user", "rollback": "not_required"}],
+      "verification": ["device_ready_observed", "test_page_submitted", "physical_output_confirmed", "employee_confirms"],
+      "escalation": ["electrical_hazard", "mechanical_failure", "consumable_or_parts_required"]
+    },
+    {
+      "id": "PRINT-DISCOVERY-001",
+      "name": "printer_not_found_or_not_recognized",
+      "signals": ["missing_from_inventory", "usb_not_recognized", "discovery_timeout", "device_setup_failed"],
+      "questions": ["Is the printer connected by USB, network or print server?", "Can another employee discover it?", "Was the printer or network recently changed?"],
+      "diagnostics": ["enumerate_printers", "inspect_plug_and_play", "check_usb_or_network_link", "check_spooler", "test_discovery_protocol", "inspect_protected_print_mode"],
+      "hypotheses": ["physical_link_failure", "spooler_failure", "discovery_protocol_failure", "driver_or_policy_incompatibility", "wrong_network"],
+      "remediations": [
+        {"action": "restart_spooler_after_queue_assessment", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_service_state"},
+        {"action": "add_approved_printer", "risk": "medium", "approval": "user_or_engineer", "rollback": "remove_added_mapping"},
+        {"action": "change_protected_print_policy", "risk": "high", "approval": "endpoint_security_administrator", "rollback": "restore_policy_snapshot"}
+      ],
+      "verification": ["printer_inventory_contains_target", "printer_ready_state", "test_page_submitted", "physical_output_confirmed", "employee_confirms"]
+    },
+    {
+      "id": "PRINT-OFFLINE-001",
+      "name": "printer_offline",
+      "signals": ["offline", "paused", "use_printer_offline_enabled", "unreachable_port"],
+      "questions": ["Is the printer panel showing Ready?", "Can another employee print?", "Is this a local or shared printer?"],
+      "diagnostics": ["inspect_printer_state", "inspect_queue_flags", "inspect_port", "test_dns_and_ip", "test_protocol_port", "check_print_server_if_shared"],
+      "hypotheses": ["offline_flag", "paused_queue", "stale_ip_address", "network_failure", "print_server_failure", "physical_device_offline"],
+      "remediations": [
+        {"action": "resume_printer_queue", "risk": "low", "approval": "user", "rollback": "pause_queue"},
+        {"action": "disable_use_printer_offline", "risk": "low", "approval": "user", "rollback": "restore_previous_flag"},
+        {"action": "update_approved_tcp_ip_port", "risk": "medium", "approval": "engineer", "rollback": "restore_previous_port"}
+      ],
+      "verification": ["online_or_ready_state", "test_page_submitted", "job_leaves_queue", "physical_output_confirmed", "employee_confirms"]
+    },
+    {
+      "id": "PRINT-QUEUE-001",
+      "name": "stuck_or_failed_print_job",
+      "signals": ["job_stuck", "deleting_state", "error_state", "queue_not_advancing"],
+      "questions": ["Which job is stuck and who owns it?", "Are other jobs or users affected?", "Does the document contain sensitive information?"],
+      "diagnostics": ["enumerate_jobs_metadata_only", "identify_job_owner", "inspect_job_status", "inspect_spooler", "inspect_printservice_events"],
+      "hypotheses": ["corrupt_job", "application_rendering_failure", "spooler_deadlock", "driver_failure", "device_unreachable"],
+      "remediations": [
+        {"action": "cancel_user_selected_job", "risk": "low", "approval": "job_owner_or_engineer", "rollback": "resubmit_source_document"},
+        {"action": "restart_selected_job", "risk": "low", "approval": "job_owner", "rollback": "cancel_job"},
+        {"action": "clear_queue_after_owner_and_scope_check", "risk": "medium", "approval": "engineer", "rollback": "jobs_require_resubmission"}
+      ],
+      "verification": ["queue_advances", "new_test_job_completes", "physical_output_confirmed", "employee_confirms"]
+    },
+    {
+      "id": "PRINT-SPOOLER-001",
+      "name": "print_spooler_stopped_or_crashing",
+      "signals": ["spooler_stopped", "spoolsv_crash", "printers_disappear", "all_local_queues_fail"],
+      "questions": ["Do all printers disappear or only one?", "Did this begin after a driver installation?", "Are pending jobs business-critical?"],
+      "diagnostics": ["inspect_spooler_state", "collect_service_events", "collect_printservice_events", "inventory_pending_jobs", "inventory_recent_driver_changes", "check_resource_pressure"],
+      "hypotheses": ["corrupt_spool_file", "faulting_driver", "resource_pressure", "policy_conflict", "service_configuration_failure"],
+      "remediations": [
+        {"action": "restart_spooler_after_queue_assessment", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_service_state"},
+        {"action": "clear_spool_files_after_job_owner_review", "risk": "medium", "approval": "engineer", "rollback": "jobs_require_resubmission"},
+        {"action": "remove_or_replace_faulting_driver", "risk": "high", "approval": "privileged_engineer", "rollback": "restore_signed_driver_package"}
+      ],
+      "verification": ["spooler_running_stably", "printer_inventory_restored", "test_job_completes", "physical_output_confirmed", "employee_confirms"]
+    },
+    {
+      "id": "PRINT-PORT-001",
+      "name": "incorrect_or_unreachable_printer_port",
+      "signals": ["tcp_port_timeout", "stale_ip", "wrong_hostname", "wsd_instability", "ipp_failure"],
+      "questions": ["What printer asset label or hostname is expected?", "Was its address recently changed?", "Can another approved device reach it?"],
+      "diagnostics": ["inspect_port_configuration", "resolve_hostname", "test_ip_reachability", "test_protocol_port", "compare_asset_inventory", "detect_duplicate_ip"],
+      "hypotheses": ["stale_ip_address", "dns_failure", "wrong_port_protocol", "network_acl", "duplicate_ip", "wsd_discovery_failure"],
+      "remediations": [
+        {"action": "update_approved_tcp_ip_port", "risk": "medium", "approval": "engineer", "rollback": "restore_previous_port"},
+        {"action": "recreate_approved_ipp_or_wsd_mapping", "risk": "medium", "approval": "engineer", "rollback": "restore_previous_mapping"},
+        {"action": "change_network_acl_or_dns", "risk": "high", "approval": "network_administrator", "rollback": "restore_network_configuration"}
+      ],
+      "verification": ["protocol_port_reachable", "printer_ready_state", "test_job_completes", "physical_output_confirmed", "employee_confirms"]
+    },
+    {
+      "id": "PRINT-SERVER-001",
+      "name": "shared_printer_or_print_server_failure",
+      "signals": ["share_unavailable", "server_name_unresolved", "access_denied", "multiple_users_affected"],
+      "questions": ["Are multiple users affected?", "Can you reach the approved print server?", "Was access or the queue recently changed?"],
+      "diagnostics": ["resolve_print_server", "test_server_connectivity", "inspect_client_mapping", "check_multiple_user_impact", "request_server_queue_evidence", "request_permission_evidence"],
+      "hypotheses": ["server_outage", "name_resolution_failure", "share_removed", "permission_failure", "server_queue_or_spooler_failure"],
+      "remediations": [
+        {"action": "reconnect_verified_print_share", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_previous_mapping"},
+        {"action": "restart_server_spooler_or_modify_share", "risk": "high", "approval": "print_server_administrator", "rollback": "administrator_defined"},
+        {"action": "change_print_permission", "risk": "high", "approval": "print_server_administrator", "rollback": "restore_permission_snapshot"}
+      ],
+      "verification": ["share_accessible", "client_mapping_healthy", "test_job_completes", "physical_output_confirmed", "employee_confirms"]
+    },
+    {
+      "id": "PRINT-DRIVER-001",
+      "name": "driver_missing_incompatible_or_crashing",
+      "signals": ["driver_unavailable", "driver_install_failure", "spooler_crash_module", "incorrect_output", "architecture_mismatch"],
+      "questions": ["What is the exact printer model?", "Did this begin after a Windows or driver update?", "Is Windows Protected Print Mode enabled?"],
+      "diagnostics": ["inventory_driver", "verify_driver_signature", "compare_device_model", "inspect_architecture", "inspect_protected_print_mode", "collect_spooler_crash_evidence"],
+      "hypotheses": ["unsigned_or_incompatible_driver", "wrong_model_driver", "protected_print_incompatibility", "driver_regression", "damaged_driver_package"],
+      "remediations": [
+        {"action": "switch_to_approved_windows_ready_print", "risk": "high", "approval": "privileged_engineer", "rollback": "restore_previous_signed_driver"},
+        {"action": "install_approved_signed_oem_driver", "risk": "high", "approval": "privileged_engineer", "rollback": "restore_previous_signed_driver"}
+      ],
+      "verification": ["driver_loaded_without_error", "spooler_stable", "test_job_completes", "output_rendering_correct", "physical_output_confirmed", "employee_confirms"]
+    },
+    {
+      "id": "PRINT-PROTECTED-001",
+      "name": "windows_protected_print_mode_incompatibility",
+      "signals": ["third_party_printer_removed", "driver_install_blocked", "mopria_incompatibility", "policy_managed_setting"],
+      "questions": ["Was Windows Protected Print Mode recently enabled?", "Is the printer Mopria certified?", "Is the setting controlled by company policy?"],
+      "diagnostics": ["inspect_protected_print_mode", "inspect_policy_source", "check_mopria_compatibility", "inventory_removed_or_incompatible_queues", "inspect_windows_ready_print"],
+      "hypotheses": ["third_party_driver_removed_by_design", "non_mopria_device", "policy_enforcement", "unsupported_device_workflow"],
+      "remediations": [
+        {"action": "reinstall_compatible_printer_with_windows_ready_print", "risk": "medium", "approval": "engineer", "rollback": "remove_added_mapping"},
+        {"action": "change_protected_print_policy", "risk": "high", "approval": "endpoint_security_administrator", "rollback": "restore_policy_snapshot"}
+      ],
+      "verification": ["security_policy_remains_compliant", "compatible_queue_present", "test_job_completes", "physical_output_confirmed", "employee_confirms"]
+    },
+    {
+      "id": "PRINT-PERMISSION-001",
+      "name": "printer_mapping_or_permission_failure",
+      "signals": ["access_denied", "cannot_connect", "mapping_missing", "credential_prompt"],
+      "questions": ["Were you previously able to use this printer?", "Are coworkers in the same role affected?", "Was your department or device recently changed?"],
+      "diagnostics": ["verify_user_and_device", "inspect_mapping", "compare_authorized_group_without_expansion", "request_server_permission_evidence", "check_policy_application"],
+      "hypotheses": ["missing_entitlement", "stale_mapping", "policy_not_applied", "server_permission_failure"],
+      "remediations": [
+        {"action": "refresh_approved_mapping", "risk": "medium", "approval": "user_or_engineer", "rollback": "restore_previous_mapping"},
+        {"action": "change_print_permission", "risk": "high", "approval": "print_server_administrator", "rollback": "restore_permission_snapshot"}
+      ],
+      "verification": ["mapping_present", "authorized_access_succeeds", "test_job_completes", "physical_output_confirmed", "employee_confirms"]
+    },
+    {
+      "id": "PRINT-PERF-001",
+      "name": "slow_printing_or_incorrect_output",
+      "signals": ["slow_spooling", "slow_device_output", "garbled_output", "wrong_orientation", "poor_quality"],
+      "questions": ["Is every document affected or one application/file?", "Does a Windows test page print correctly?", "Are the paper, quality and finishing settings correct?"],
+      "diagnostics": ["submit_controlled_test_page", "compare_simple_and_complex_job", "inspect_preferences", "inspect_driver", "measure_network_latency", "request_physical_output_observation"],
+      "hypotheses": ["application_rendering", "job_complexity", "quality_setting", "driver_mismatch", "network_latency", "physical_consumable_or_hardware_issue"],
+      "remediations": [
+        {"action": "correct_user_approved_print_preferences", "risk": "low", "approval": "user", "rollback": "restore_preferences_snapshot"},
+        {"action": "switch_to_approved_driver", "risk": "high", "approval": "privileged_engineer", "rollback": "restore_previous_signed_driver"}
+      ],
+      "verification": ["test_page_latency_within_policy", "output_rendering_correct", "physical_output_confirmed", "physical_quality_confirmed", "employee_confirms"]
+    }
+  ],
+  "global_escalation_triggers": [
+    "electrical_or_physical_hazard",
+    "mechanical_or_consumable_failure",
+    "multiple_users_or_print_server_outage",
+    "network_or_security_policy_change_required",
+    "unsigned_or_unapproved_driver_required",
+    "possible_print_data_exposure",
+    "unsupported_windows_or_printer_model",
+    "bounded_retry_limit_reached"
+  ]
+}

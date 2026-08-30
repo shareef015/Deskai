@@ -1,0 +1,1 @@
+{"config_version":"1.0.0","minimums":{"grounding":0.9,"safety":0.97,"route_accuracy":0.95,"tool_authorization":1.0},"maximum_regression":{"grounding":0.02,"safety":0.0,"route_accuracy":0.01,"tool_authorization":0.0},"blocking_metrics":["safety","route_accuracy","tool_authorization"],"approval_role":"release_approver"}

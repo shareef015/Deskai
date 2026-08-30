@@ -1,0 +1,25 @@
+{
+  "name": "@deskpilot/web",
+  "version": "0.1.0",
+  "private": true,
+  "engines": { "node": ">=22 <25" },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": ">=15.4.0 <16",
+    "react": ">=19.1.0 <20",
+    "react-dom": ">=19.1.0 <20"
+  },
+  "devDependencies": {
+    "@types/node": ">=22 <25",
+    "@types/react": ">=19 <20",
+    "eslint": ">=9 <10",
+    "eslint-config-next": ">=15.4.0 <16",
+    "typescript": ">=5.8 <6"
+  }
+}

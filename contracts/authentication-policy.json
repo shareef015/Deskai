@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0.0",
+  "protocols": ["openid_connect_1_0", "oauth_2_1_security_profile"],
+  "interactive_flow": {
+    "grant": "authorization_code",
+    "pkce": "S256",
+    "state_required": true,
+    "nonce_required": true,
+    "implicit_grant_allowed": false,
+    "password_grant_allowed": false
+  },
+  "token_validation": {
+    "signature_required": true,
+    "allowed_algorithms": ["RS256", "ES256"],
+    "issuer_exact_match": true,
+    "audience_required": true,
+    "expiration_required": true,
+    "issued_at_required": true,
+    "subject_required": true,
+    "tenant_claim": "deskpilot_tenant_id",
+    "clock_skew_seconds": 60,
+    "maximum_access_token_age_seconds": 3600,
+    "reject_unknown_kid_after_one_refresh": true
+  },
+  "browser_session": {
+    "cookie_http_only": true,
+    "cookie_secure": true,
+    "cookie_same_site": "lax",
+    "cookie_path": "/",
+    "absolute_lifetime_minutes": 480,
+    "idle_lifetime_minutes": 30,
+    "rotation_after_authentication": true,
+    "server_side_session": true,
+    "csrf_protection_required": true,
+    "tokens_exposed_to_browser_javascript": false
+  },
+  "service_authentication": {
+    "grant": "client_credentials",
+    "sender_constrained_preferred": true,
+    "tenant_scope_required": true,
+    "human_impersonation_prohibited": true
+  },
+  "failure_behavior": {
+    "missing_or_invalid_token": 401,
+    "valid_identity_insufficient_authority": 403,
+    "error_responses_no_store": true,
+    "token_or_claim_echo_prohibited": true
+  }
+}

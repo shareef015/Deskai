@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "transport": "server_sent_events",
+  "media_type": "text/event-stream",
+  "authentication_required": true,
+  "authorization_action": "incident.read",
+  "tenant_scope_from_verified_principal": true,
+  "ordering": {"scope": "single_incident", "event_id": "aggregate_sequence_number", "monotonic": true, "duplicate_delivery_possible": true},
+  "replay": {"request_header": "Last-Event-ID", "exclusive_resume": true, "invalid_cursor_status": 422, "maximum_batch": 100, "source": "postgresql_incident_events"},
+  "connection": {"heartbeat_seconds": 15, "poll_seconds": 1, "maximum_duration_seconds": 1800, "proxy_buffering_disabled": true, "client_reconnect_required": true},
+  "backpressure": {"unbounded_queue_prohibited": true, "producer_awaits_transport": true, "slow_client_disconnect_allowed": true, "client_deduplicates_by_event_id": true},
+  "privacy": {"tenant_id_in_payload": false, "authorization_data_in_url_prohibited": true, "secret_fields_prohibited": true, "cache_control": "no-cache_no-store"},
+  "failure": {"database_unavailable": "close_stream_and_client_reconnects", "authorization_revoked": "close_stream", "cursor_expired": "reset_required_event"}
+}

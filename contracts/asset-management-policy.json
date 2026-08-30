@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "authoritative_sources": {
+    "human_identity": "customer_oidc_directory_subject",
+    "device_identity": "signed_endpoint_agent_enrollment",
+    "asset_inventory": "deskpilot_tenant_inventory",
+    "assignment_history": "device_assignments_append_history"
+  },
+  "supported_asset_types": ["windows_endpoint", "printer", "scanner", "print_server"],
+  "endpoint_operating_systems": ["windows_10", "windows_11"],
+  "device_lifecycle": {
+    "states": ["discovered", "pending_enrollment", "active", "restricted", "quarantined", "retired"],
+    "terminal": ["retired"],
+    "transitions": {
+      "discovered": ["pending_enrollment", "retired"],
+      "pending_enrollment": ["active", "restricted", "retired"],
+      "active": ["restricted", "quarantined", "retired"],
+      "restricted": ["active", "quarantined", "retired"],
+      "quarantined": ["restricted", "retired"],
+      "retired": []
+    }
+  },
+  "ownership": {
+    "one_active_primary_assignment_per_device": true,
+    "assignment_requires_same_tenant": true,
+    "assignment_history_is_time_bounded": true,
+    "employee_may_not_self_assign": true,
+    "shared_device_requires_explicit_classification": true
+  },
+  "privacy": {
+    "raw_serial_number_storage_allowed": false,
+    "serial_sha256_fingerprint_required": true,
+    "employee_email_storage_required": false,
+    "inventory_exports_are_audited": true
+  },
+  "management_actions": {
+    "read": ["asset.read", "device.read"],
+    "write": ["asset.manage", "device.manage"],
+    "assign": ["device.assign"],
+    "retire": ["device.retire"]
+  }
+}

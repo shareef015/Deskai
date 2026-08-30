@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0.0",
+  "authorization_principles": [
+    "default_deny",
+    "least_privilege",
+    "tenant_scope_required",
+    "device_scope_required_for_endpoint_actions",
+    "human_authority_is_never_inferred_by_llm",
+    "diagnostic_consent_is_not_remediation_approval",
+    "requester_cannot_approve_own_high_risk_change",
+    "every_privileged_decision_is_audited"
+  ],
+  "roles": {
+    "employee": {
+      "purpose": "request_support_and_control_access_to_assigned_devices",
+      "permissions": ["incident.create", "incident.read_own", "conversation.participate", "diagnostic_consent.grant_own_device", "diagnostic_consent.revoke_own_device", "low_risk_remediation.approve_own_device", "resolution.confirm_own_incident"],
+      "denied": ["incident.read_other", "endpoint.arbitrary_command", "medium_high_risk.approve", "audit.modify"]
+    },
+    "service_desk_engineer": {
+      "purpose": "perform_l1_l2_investigation_and_propose_bounded_repairs",
+      "permissions": ["incident.read_assigned", "incident.update_assigned", "diagnostic.read_execute_with_consent", "remediation.propose", "low_risk_remediation.execute_if_authorized", "escalation.create", "evidence.read_scoped"],
+      "denied": ["high_risk_remediation.approve_own_proposal", "identity_policy.change", "network_policy.change", "security_policy.change", "audit.modify"]
+    },
+    "l2_l3_specialist": {
+      "purpose": "investigate_complex_or_escalated_domain_incidents",
+      "permissions": ["incident.read_escalated", "incident.update_escalated", "diagnostic.advanced_read_execute_with_consent", "remediation.propose", "medium_risk_remediation.execute_if_authorized", "knowledge_candidate.submit"],
+      "denied": ["high_risk_remediation.approve_own_proposal", "cross_tenant.access", "audit.modify"]
+    },
+    "remediation_approver": {
+      "purpose": "approve_or_reject_policy_eligible_medium_risk_changes",
+      "permissions": ["medium_risk_remediation.review", "medium_risk_remediation.approve", "medium_risk_remediation.reject", "evidence.read_approval_scope"],
+      "denied": ["approve_own_proposal", "endpoint.execute", "high_risk_privileged_change.approve", "audit.modify"]
+    },
+    "endpoint_administrator": {
+      "purpose": "authorize_and_execute_privileged_windows_endpoint_changes",
+      "permissions": ["endpoint_privileged_change.review", "endpoint_privileged_change.approve", "endpoint_privileged_change.execute", "driver.approved_package_manage", "managed_profile.reprovision", "rollback.execute"],
+      "denied": ["cross_tenant.access", "security_policy.change_without_security_role", "audit.modify"]
+    },
+    "network_administrator": {
+      "purpose": "own_dns_dhcp_proxy_vpn_route_and_network_policy_changes",
+      "permissions": ["network_change.review", "network_change.approve", "network_change.execute", "network_evidence.read_scoped", "network_rollback.execute"],
+      "denied": ["identity_policy.change", "audit.modify", "cross_tenant.access"]
+    },
+    "identity_exchange_administrator": {
+      "purpose": "own_identity_authentication_exchange_and_mailbox_authority",
+      "permissions": ["identity_change.review", "identity_change.approve", "identity_change.execute", "exchange_change.review", "exchange_change.approve", "exchange_change.execute", "identity_exchange_rollback.execute"],
+      "denied": ["endpoint_security_policy.change", "audit.modify", "cross_tenant.access"]
+    },
+    "security_administrator": {
+      "purpose": "own_firewall_edr_endpoint_security_and_security_exception decisions",
+      "permissions": ["security_change.review", "security_change.approve", "security_change.execute", "security_incident.receive", "security_exception.manage", "security_rollback.execute"],
+      "denied": ["audit.modify", "cross_tenant.access", "silent_security_control_disable"]
+    },
+    "tenant_administrator": {
+      "purpose": "configure_customer_tenant_users_roles_integrations_and_policies",
+      "permissions": ["tenant.configure", "user_role.assign", "integration.configure", "policy.publish", "license.view", "audit.export"],
+      "denied": ["audit.modify", "incident_content_read_without_business_need", "cross_tenant.access"]
+    },
+    "auditor": {
+      "purpose": "independently inspect controls_decisions_and_evidence",
+      "permissions": ["audit.read", "audit.export", "policy.read", "approval.read", "evidence.read_redacted"],
+      "denied": ["incident.modify", "approval.decide", "endpoint.execute", "policy.publish", "audit.modify"]
+    }
+  },
+  "machine_identities": {
+    "endpoint_agent": ["heartbeat.publish_own", "diagnostic.execute_capability_token", "remediation.execute_capability_token", "result.sign_and_publish_own"],
+    "api_service": ["request.authenticate", "policy.enforce", "audit.append"],
+    "ai_service": ["incident_context.read_scoped", "recommendation.propose", "tool_request.propose"],
+    "mcp_gateway": ["capability.validate", "tool.dispatch_authorized", "tool_result.record"],
+    "worker": ["job.execute_scoped", "job_status.publish"]
+  },
+  "segregation_of_duties": [
+    {"id": "SOD-001", "rule": "medium_or_high_risk_proposer_must_not_be_sole_approver"},
+    {"id": "SOD-002", "rule": "llm_and_ai_service_may_never_approve_or_execute_without_policy_authorization"},
+    {"id": "SOD-003", "rule": "auditor_must_not_modify_incidents_approvals_policies_or_evidence"},
+    {"id": "SOD-004", "rule": "tenant_administrator_must_not_modify_audit_history"},
+    {"id": "SOD-005", "rule": "high_risk_domain_change_requires_matching_domain_administrator"},
+    {"id": "SOD-006", "rule": "employee_consent_covers_only_assigned_or_explicitly_delegated_device"},
+    {"id": "SOD-007", "rule": "break_glass_requires_human_identity_reason_expiry_and_post_review"}
+  ],
+  "break_glass": {
+    "enabled_by_default": false,
+    "required_fields": ["human_actor_id", "tenant_id", "incident_id", "reason", "capabilities", "issued_at", "expires_at", "reviewer_id"],
+    "maximum_duration_minutes": 30,
+    "mandatory_post_event_review": true,
+    "llm_eligible": false
+  }
+}

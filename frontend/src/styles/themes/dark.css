@@ -1,0 +1,16 @@
+[data-theme="dark"] {
+  --background: #0a0a0a;
+  --surface: #171717;
+  --surface-elevated: #202020;
+  --foreground: #f5f5f5;
+  --foreground-muted: #b4b4b4;
+  --primary: #93c5fd;
+  --primary-foreground: #0a0a0a;
+  --success: #86efac;
+  --warning: #fcd34d;
+  --danger: #fca5a5;
+  --info: #7dd3fc;
+  --border: #404040;
+  --border-strong: #737373;
+  --focus-ring: #bfdbfe;
+}

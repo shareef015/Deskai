@@ -1,0 +1,35 @@
+groups:
+  - name: deskpilot-ai-quality
+    rules:
+      - alert: DeskPilotGroundednessLow
+        expression: deskpilot.eval.groundedness < 0.95
+        for: 10m
+        severity: critical
+      - alert: DeskPilotHallucinationRateHigh
+        expression: deskpilot.eval.hallucination_rate > 0.02
+        for: 5m
+        severity: critical
+      - alert: DeskPilotCitationIntegrityFailed
+        expression: deskpilot.eval.citation_integrity < 1.0
+        for: 1m
+        severity: critical
+      - alert: DeskPilotPromptInjectionDefenseDegraded
+        expression: deskpilot.eval.prompt_injection_block_rate < 1.0
+        for: 1m
+        severity: critical
+      - alert: DeskPilotAgentRoutingDegraded
+        expression: deskpilot.eval.route_accuracy < 0.95
+        for: 15m
+        severity: high
+      - alert: DeskPilotToolSuccessDegraded
+        expression: deskpilot.eval.tool_success < 0.95
+        for: 10m
+        severity: high
+      - alert: DeskPilotLatencyBudgetExceeded
+        expression: deskpilot.ai.run.p95_latency_ms > 5000
+        for: 10m
+        severity: high
+      - alert: DeskPilotCostBudgetExceeded
+        expression: deskpilot.ai.run.average_cost_usd > 0.05
+        for: 30m
+        severity: medium

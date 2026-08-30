@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "base_path": "/api/v1/incidents",
+  "operations": ["create", "read", "list", "update"],
+  "delete_supported": false,
+  "tenant_source": "authenticated_principal_only",
+  "authorization_actions": {"create": "incident.create", "read": "incident.read", "list": "incident.list", "update": "incident.update"},
+  "validation": {"unknown_fields_rejected": true, "summary_max_length": 500, "priority_min": 1, "priority_max": 5, "supported_categories": ["outlook", "printer", "scanner", "windows_network"], "status_updates_reserved_for_lifecycle_service": true},
+  "concurrency": {"mechanism": "optimistic_version", "update_header": "If-Match", "conflict_status": 409, "atomic_database_predicate_required": true},
+  "pagination": {"strategy": "keyset", "cursor_fields": ["opened_at", "id"], "default_limit": 50, "maximum_limit": 200},
+  "response_safety": {"tenant_id_exposed": false, "cross_tenant_not_found_indistinguishable": true, "cache_control": "private_no_store"}
+}

@@ -1,0 +1,13 @@
+[project]
+name = "deskpilot-ai-service"
+version = "0.1.0"
+description = "Tenant-safe LangGraph orchestration for DeskPilot"
+requires-python = ">=3.11"
+dependencies = ["langgraph>=1,<2", "langgraph-checkpoint-postgres>=3.1,<4", "pycryptodome>=3.20,<4"]
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

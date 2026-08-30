@@ -1,0 +1,1 @@
+{"config_version":"1.0.0","maximum_queue_rows":500,"stalled_after_seconds":900,"SLA_at_risk_seconds":900,"priority_sort":["severity","sla_due_at","incident_id"],"environment_mix_allowed":false,"live_update_cursor":true}

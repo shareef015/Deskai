@@ -1,0 +1,15 @@
+{
+  "environment": "production",
+  "debug": false,
+  "api_docs_enabled": false,
+  "synthetic_mode": false,
+  "external_data_transfer": false,
+  "log_level": "INFO",
+  "max_managed_endpoints": 10,
+  "managed_endpoint_operating_systems": ["windows_10", "windows_11"],
+  "database_url_ref": "env://DESKPILOT_DATABASE_URL",
+  "redis_url_ref": "env://DESKPILOT_REDIS_URL",
+  "oidc_issuer": "https://identity.customer.invalid/tenant/v2.0",
+  "oidc_audience": "deskpilot-api",
+  "endpoint_ca_certificate_ref": "file:///run/deskpilot/certs/endpoint-ca.pem"
+}

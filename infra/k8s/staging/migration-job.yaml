@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: deskpilot-migrate
+  namespace: deskpilot-staging
+spec:
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: deskpilot-worker
+      containers:
+        - name: migrate
+          image: registry.example.invalid/deskpilot-api:staging
+          command: ["python", "-m", "deskpilot_migrations", "upgrade"]
+          envFrom:
+            - configMapRef:
+                name: deskpilot-config
+            - secretRef:
+                name: deskpilot-runtime-secrets
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault

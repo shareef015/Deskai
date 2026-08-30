@@ -1,0 +1,29 @@
+name: Performance Performance Certification
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  deterministic-performance-regression:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run cumulative backend security/AI/LLMOps/performance suite
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Generate Performance synthetic performance certificate
+        run: python scripts/run_performance_certification.py
+      - name: Compile backend
+        run: python -m compileall -q src tests scripts
+      - name: Upload performance certificate
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-performance-certificate
+          path: backend/evals/PERFORMANCE_CERTIFICATION.json

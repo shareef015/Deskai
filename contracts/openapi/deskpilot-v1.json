@@ -1,0 +1,55 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "DeskPilot API", "version": "1.0.0" },
+  "servers": [{ "url": "/api/v1" }],
+  "paths": {
+    "/conversations": {
+      "post": {
+        "operationId": "createConversation",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateConversationRequest" } } }
+        },
+        "responses": {
+          "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Conversation" } } } },
+          "422": { "$ref": "#/components/responses/ValidationError" }
+        }
+      }
+    },
+    "/conversations/{conversation_id}/messages": {
+      "post": {
+        "operationId": "sendMessage",
+        "parameters": [{ "name": "conversation_id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SendMessageRequest" } } } },
+        "responses": { "200": { "description": "Accepted", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Message" } } } } }
+      }
+    },
+    "/conversations/{conversation_id}/consents": {
+      "post": {
+        "operationId": "recordConsent",
+        "parameters": [{ "name": "conversation_id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ConsentRequest" } } } },
+        "responses": { "201": { "description": "Recorded", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ConsentReceipt" } } } } }
+      }
+    }
+  },
+  "security": [{ "oidcBearer": [] }],
+  "components": {
+    "securitySchemes": {
+      "oidcBearer": {
+        "type": "openIdConnect",
+        "openIdConnectUrl": "https://identity.customer.invalid/.well-known/openid-configuration"
+      }
+    },
+    "schemas": {
+      "CreateConversationRequest": { "type": "object", "additionalProperties": false, "required": ["device_id", "initial_message"], "properties": { "device_id": { "type": "string", "format": "uuid" }, "initial_message": { "type": "string", "minLength": 1, "maxLength": 4000 } } },
+      "Conversation": { "type": "object", "additionalProperties": false, "required": ["id", "status", "created_at"], "properties": { "id": { "type": "string", "format": "uuid" }, "status": { "type": "string", "enum": ["open", "waiting_for_user", "resolved", "escalated"] }, "created_at": { "type": "string", "format": "date-time" } } },
+      "SendMessageRequest": { "type": "object", "additionalProperties": false, "required": ["content"], "properties": { "content": { "type": "string", "minLength": 1, "maxLength": 4000 } } },
+      "Message": { "type": "object", "additionalProperties": false, "required": ["id", "role", "content", "created_at"], "properties": { "id": { "type": "string", "format": "uuid" }, "role": { "type": "string", "enum": ["employee", "assistant", "technician", "system"] }, "content": { "type": "string" }, "created_at": { "type": "string", "format": "date-time" } } },
+      "ConsentRequest": { "type": "object", "additionalProperties": false, "required": ["scope", "decision", "expires_at"], "properties": { "scope": { "type": "string", "enum": ["diagnostic", "remediation", "remote_session"] }, "decision": { "type": "string", "enum": ["granted", "denied"] }, "expires_at": { "type": "string", "format": "date-time" } } },
+      "ConsentReceipt": { "type": "object", "additionalProperties": false, "required": ["id", "conversation_id", "scope", "decision", "recorded_at"], "properties": { "id": { "type": "string", "format": "uuid" }, "conversation_id": { "type": "string", "format": "uuid" }, "scope": { "type": "string" }, "decision": { "type": "string" }, "recorded_at": { "type": "string", "format": "date-time" } } },
+      "Problem": { "type": "object", "additionalProperties": false, "required": ["type", "title", "status", "code", "correlation_id", "retryable"], "properties": { "type": { "type": "string", "format": "uri" }, "title": { "type": "string" }, "status": { "type": "integer", "minimum": 400, "maximum": 599 }, "code": { "type": "string" }, "detail": { "type": "string", "maxLength": 240 }, "correlation_id": { "type": "string" }, "retryable": { "type": "boolean" }, "retry_after_seconds": { "type": "integer", "minimum": 1, "maximum": 3600 } } }
+    },
+    "responses": { "ValidationError": { "description": "Validation failed", "content": { "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } } } } }
+  }
+}

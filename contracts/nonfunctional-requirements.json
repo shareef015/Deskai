@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0.0",
+  "profiles": {
+    "private_ten_device_pilot": {
+      "availability_target_percent": 99.5,
+      "rpo_minutes": 240,
+      "rto_minutes": 240,
+      "concurrent_active_incidents": 10,
+      "registered_endpoints": 10
+    },
+    "high_availability_production": {
+      "availability_target_percent": 99.9,
+      "rpo_minutes": 15,
+      "rto_minutes": 60,
+      "requires_multi_node_and_off_host_dependencies": true
+    }
+  },
+  "slos": [
+    {"id": "SLO-001", "name": "api_latency", "indicator": "non_ai_api_p95_ms", "target": 500, "window": "30d"},
+    {"id": "SLO-002", "name": "chat_acknowledgement", "indicator": "chat_ack_p95_ms", "target": 2000, "window": "30d"},
+    {"id": "SLO-003", "name": "first_stream_event", "indicator": "first_event_p95_ms", "target": 3000, "window": "30d"},
+    {"id": "SLO-004", "name": "endpoint_command_ack", "indicator": "authorized_command_ack_p95_ms", "target": 5000, "window": "30d"},
+    {"id": "SLO-005", "name": "audit_durability", "indicator": "material_events_persisted_percent", "target": 100, "window": "30d"},
+    {"id": "SLO-006", "name": "tenant_isolation", "indicator": "cross_tenant_access_events", "target": 0, "window": "forever"},
+    {"id": "SLO-007", "name": "consent_enforcement", "indicator": "endpoint_sessions_without_valid_consent", "target": 0, "window": "forever"},
+    {"id": "SLO-008", "name": "verified_closure", "indicator": "closures_without_technical_and_employee_confirmation", "target": 0, "window": "forever"}
+  ],
+  "quality_kpis": [
+    {"id": "KPI-001", "name": "classification_macro_f1", "target_min": 0.90},
+    {"id": "KPI-002", "name": "retrieval_recall_at_10", "target_min": 0.90},
+    {"id": "KPI-003", "name": "citation_correctness", "target_min": 0.95},
+    {"id": "KPI-004", "name": "grounded_answer_rate", "target_min": 0.95},
+    {"id": "KPI-005", "name": "unsafe_tool_request_block_rate", "target_min": 1.0},
+    {"id": "KPI-006", "name": "false_resolution_rate", "target_max": 0.01},
+    {"id": "KPI-007", "name": "successful_rollback_rate_supported_actions", "target_min": 0.99},
+    {"id": "KPI-008", "name": "employee_confirmation_rate_after_technical_success", "target_min": 0.95}
+  ],
+  "budget": {
+    "currency": "USD",
+    "ten_device_monthly_platform_soft_limit": 800,
+    "ten_device_monthly_platform_hard_limit": 1200,
+    "per_incident_ai_soft_limit": 2,
+    "per_incident_ai_hard_limit": 5,
+    "controls": [
+      "model_route_by_task_risk_and_complexity",
+      "conditional_rag",
+      "context_and_output_token_limits",
+      "exact_and_tenant_safe_semantic_cache",
+      "maximum_graph_iterations",
+      "maximum_tool_calls",
+      "trace_sampling_and_retention",
+      "per_tenant_quota_and_alerts"
+    ],
+    "hard_limit_behavior": "stop_nonessential_ai_work_and_escalate_without_bypassing_safety"
+  },
+  "security": {
+    "transport": "tls_1_3_preferred_tls_1_2_minimum",
+    "endpoint_identity": "mutual_tls_machine_certificate",
+    "encryption_at_rest": true,
+    "secrets_in_logs_allowed": false,
+    "critical_vulnerability_release_threshold": 0,
+    "high_vulnerability_release_threshold": 0
+  },
+  "retention": {
+    "customer_configurable": true,
+    "default_chat_days": 90,
+    "default_operational_trace_days": 30,
+    "default_audit_days": 365,
+    "synthetic_test_artifact_hours": 24
+  },
+  "accessibility": {"target": "WCAG_2_2_AA", "keyboard_only_supported": true, "screen_reader_supported": true},
+  "release_gates": [
+    "all_contract_tests_pass",
+    "no_cross_tenant_test_failure",
+    "no_consent_or_authorization_bypass",
+    "rag_quality_thresholds_pass",
+    "agent_safety_thresholds_pass",
+    "rollback_tests_pass",
+    "backup_restore_test_pass",
+    "critical_and_high_vulnerabilities_zero"
+  ]
+}

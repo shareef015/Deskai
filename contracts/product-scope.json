@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "product": {
+    "name": "DeskPilot AI ServiceOps",
+    "deployment_model": "private_customer_controlled",
+    "managed_endpoint_operating_systems": ["windows_10", "windows_11"],
+    "initial_pilot_device_limit": 10,
+    "data_residency_default": "customer_environment"
+  },
+  "support_modes": [
+    "guided_support",
+    "synthetic_live_demo",
+    "assisted_read_only_diagnostics",
+    "governed_live_remediation"
+  ],
+  "resolution_invariant": [
+    "consent_obtained",
+    "diagnostics_completed",
+    "root_cause_or_bounded_hypothesis_recorded",
+    "remediation_authorized",
+    "remediation_executed",
+    "technical_verification_passed",
+    "employee_confirmation_received"
+  ],
+  "prohibited_capabilities": [
+    "unrestricted_remote_shell",
+    "hidden_or_unattended_user_session_control",
+    "credential_or_token_extraction",
+    "authorization_decided_by_llm",
+    "cross_tenant_tool_execution",
+    "security_control_bypass",
+    "incident_closure_from_exit_code_only",
+    "silent_model_or_tool_substitution"
+  ]
+}

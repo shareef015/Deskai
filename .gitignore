@@ -1,0 +1,17 @@
+*.egg-info/
+*.pyc
+*.tsbuildinfo
+.env
+.env.local
+.next/
+.playwright-mcp/
+.turbo/
+.venv/
+/deskpilot-home.png
+__pycache__/
+build/
+coverage/
+dist/
+node_modules/
+poc-*.png
+venv/

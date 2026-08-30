@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deskpilot-worker
+  namespace: deskpilot-staging
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: deskpilot-worker
+  template:
+    metadata:
+      labels:
+        app: deskpilot-worker
+        app.kubernetes.io/name: deskpilot-ai
+        app.kubernetes.io/component: worker
+    spec:
+      serviceAccountName: deskpilot-worker
+      containers:
+        - name: worker
+          image: registry.example.invalid/deskpilot-api:staging
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "deskpilot_worker"]
+          envFrom:
+            - configMapRef:
+                name: deskpilot-config
+            - secretRef:
+                name: deskpilot-runtime-secrets
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: deskpilot-worker
+  namespace: deskpilot-staging
+  automountServiceAccountToken: false

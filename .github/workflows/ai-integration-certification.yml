@@ -1,0 +1,27 @@
+name: AI Integration Certification
+
+on:
+  pull_request:
+    paths:
+      - "backend/src/deskpilot_ai_pipeline/**"
+      - "backend/tests/test_ai_core_*.py"
+      - ".github/workflows/ai-integration-certification.yml"
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  ai-core-certification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile backend
+        run: python -m compileall -q backend/src backend/tests
+      - name: Run cumulative backend security and AI integration suites
+        run: python -m unittest discover -s backend/tests -p 'test_*.py' -v

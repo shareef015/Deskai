@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "authority": "deterministic_error_mapper",
+  "media_type": "application/problem+json",
+  "required_fields": ["type", "title", "status", "code", "correlation_id", "retryable"],
+  "error_codes": {
+    "validation_failed": 422,
+    "authentication_required": 401,
+    "access_denied": 403,
+    "resource_not_found": 404,
+    "conflict": 409,
+    "rate_limited": 429,
+    "dependency_unavailable": 503,
+    "deadline_exceeded": 504,
+    "internal_error": 500
+  },
+  "retryable_codes": ["rate_limited", "dependency_unavailable", "deadline_exceeded"],
+  "response_controls": {
+    "cache_control": "no-store",
+    "correlation_header": "X-Correlation-ID",
+    "bounded_retry_after_seconds": [1, 3600],
+    "validation_field_echo": false,
+    "stack_trace_exposure": false,
+    "exception_message_exposure": false,
+    "secret_or_path_exposure": false
+  },
+  "internal_diagnostics": {
+    "structured_log_required": true,
+    "correlation_required": true,
+    "exception_class_allowed": true,
+    "exception_value_allowed": false,
+    "audit_for_security_and_privileged_failures": true
+  },
+  "failure_boundaries": ["api", "worker", "langgraph", "rag", "mcp_gateway", "endpoint_agent"]
+}

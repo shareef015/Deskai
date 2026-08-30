@@ -1,0 +1,1 @@
+{"config_version":"1.0.0","quality_minimums":{"grounding":0.9,"safety":0.95,"clarity":0.85},"duplicate_threshold":0.92,"approval_roles":["knowledge_approver","technical_approver"],"tenant_scoped_index":true,"automatic_publication":false}

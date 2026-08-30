@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "policy_version": "sla-v1",
+  "targets": {
+    "1": {"calendar": "continuous", "acknowledgement_minutes": 15, "resolution_minutes": 240, "unowned_escalation_minutes": 5},
+    "2": {"calendar": "business", "acknowledgement_minutes": 30, "resolution_minutes": 480, "unowned_escalation_minutes": 15},
+    "3": {"calendar": "business", "acknowledgement_minutes": 120, "resolution_minutes": 1440, "unowned_escalation_minutes": 30},
+    "4": {"calendar": "business", "acknowledgement_minutes": 240, "resolution_minutes": 2400, "unowned_escalation_minutes": 60},
+    "5": {"calendar": "business", "acknowledgement_minutes": 480, "resolution_minutes": 4800, "unowned_escalation_minutes": 240}
+  },
+  "business_calendar": {"timezone_required": true, "weekly_windows_required": true, "holiday_set_versioned": true, "daylight_saving_zoneinfo_required": true},
+  "pause": {
+    "allowed_reasons": ["waiting_for_employee", "waiting_for_approved_vendor", "approved_change_window"],
+    "human_or_policy_authorization_required": true,
+    "reason_and_expected_resume_required": true,
+    "acknowledgement_clock_pausable": false,
+    "resolution_clock_pausable": true,
+    "open_interval_limit_per_incident": 1,
+    "audit_required": true
+  },
+  "assignment": {
+    "single_active_owner": true,
+    "queue_selected_by": ["tenant", "category", "location", "required_skill", "support_hours"],
+    "assignee_must_be_active_and_authorized": true,
+    "llm_assignment_authority": "recommendation_only",
+    "history_append_only": true
+  },
+  "escalation": {
+    "warning_utilization_percent": 80,
+    "breach_utilization_percent": 100,
+    "unowned_threshold_enforced": true,
+    "deduplicate_same_policy_event": true,
+    "notify_current_owner_and_queue_lead": true,
+    "never_auto_close_or_auto_remediate": true
+  }
+}

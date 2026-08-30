@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deskpilot-frontend
+  namespace: deskpilot-production
+spec:
+  replicas: 3
+  minReadySeconds: 15
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: deskpilot-frontend
+  template:
+    metadata:
+      labels:
+        app: deskpilot-frontend
+        app.kubernetes.io/name: deskpilot-ai
+        app.kubernetes.io/component: frontend
+    spec:
+      serviceAccountName: deskpilot-frontend
+      terminationGracePeriodSeconds: 45
+      containers:
+        - name: frontend
+          image: registry.example.invalid/deskpilot-frontend@sha256:REPLACE_WITH_STAGING_CERTIFIED_DIGEST
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: deskpilot-config
+            - secretRef:
+                name: deskpilot-runtime-secrets
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: deskpilot-frontend
+  namespace: deskpilot-production
+automountServiceAccountToken: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: deskpilot-frontend
+  namespace: deskpilot-production
+spec:
+  selector:
+    app: deskpilot-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

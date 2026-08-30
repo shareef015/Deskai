@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "sources": [
+    {"id": "MS-PRINT-GENERAL", "authority": "Microsoft", "url": "https://support.microsoft.com/en-us/windows/hardware/printer/fix-printer-connection-and-printing-problems-in-windows", "domains": ["physical", "connection", "installation"]},
+    {"id": "MS-PRINT-OFFLINE", "authority": "Microsoft", "url": "https://support.microsoft.com/en-us/windows/hardware/printer/troubleshooting-offline-printer-problems-in-windows", "domains": ["offline", "queue"]},
+    {"id": "MS-PRINT-QUEUE", "authority": "Microsoft", "url": "https://support.microsoft.com/en-us/windows/hardware/printer/fix-print-job-stuck-in-queue-errors-in-windows", "domains": ["queue", "spooler", "spool_files"]},
+    {"id": "MS-PRINT-SPOOLER", "authority": "Microsoft", "url": "https://support.microsoft.com/en-us/windows/hardware/printer/fix-print-spooler-service-not-running-errors-in-windows", "domains": ["spooler", "drivers"]},
+    {"id": "MS-PROTECTED-PRINT", "authority": "Microsoft", "url": "https://learn.microsoft.com/en-us/windows/modern-print/windows-protected-print-mode/windows-protected-print-mode", "domains": ["protected_print", "mopria", "windows_ready_print"]},
+    {"id": "MS-DRIVER-SERVICING", "authority": "Microsoft", "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/print/end-of-servicing-plan-for-third-party-printer-drivers-on-windows", "domains": ["drivers", "ipp", "mopria"]},
+    {"id": "MS-PRINT-SERVER-TROUBLESHOOT", "authority": "Microsoft", "url": "https://learn.microsoft.com/en-us/troubleshoot/windows-server/printing/troubleshoot-printing-scenarios", "domains": ["print_server", "driver", "spooler"]}
+  ]
+}

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: deskpilot-config
+  namespace: deskpilot-staging
+data:
+  DESKPILOT_ENV: staging
+  LOG_LEVEL: INFO
+  OTEL_SERVICE_NAMESPACE: deskpilot-ai
+  OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+  POSTGRES_SSLMODE: require
+  REDIS_TLS: "true"
+  MODEL_ROUTING_MODE: governed
+  MCP_MUTATION_MODE: approval_required
+  DEMO_MODE: "false"

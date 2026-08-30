@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: deskpilot-production-smoke
+  namespace: deskpilot-production
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 3600
+  template:
+    metadata:
+      labels:
+        app: deskpilot-production-smoke
+    spec:
+      restartPolicy: Never
+      serviceAccountName: deskpilot-api
+      containers:
+        - name: smoke
+          image: registry.example.invalid/deskpilot-api@sha256:REPLACE_WITH_STAGING_CERTIFIED_DIGEST
+          command: ["python", "-m", "deskpilot_smoke", "--environment", "production", "--non-destructive"]
+          envFrom:
+            - configMapRef:
+                name: deskpilot-config
+            - secretRef:
+                name: deskpilot-runtime-secrets
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault

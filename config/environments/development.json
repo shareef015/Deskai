@@ -1,0 +1,10 @@
+{
+  "environment": "development",
+  "debug": true,
+  "api_docs_enabled": true,
+  "synthetic_mode": true,
+  "external_data_transfer": false,
+  "log_level": "DEBUG",
+  "max_managed_endpoints": 10,
+  "managed_endpoint_operating_systems": ["windows_10", "windows_11"]
+}

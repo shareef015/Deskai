@@ -1,0 +1,234 @@
+{
+  "attack_summary": {
+    "block_rate": 1.0,
+    "blocked": 16,
+    "critical_failures": [],
+    "high_failures": [],
+    "total": 16
+  },
+  "attacks": [
+    {
+      "blocked": true,
+      "evidence": "invalid_or_expired_session",
+      "expected_control": "opaque_server_session",
+      "framework_refs": [
+        "OWASP-API2"
+      ],
+      "id": "RT-001",
+      "severity": "critical",
+      "surface": "identity",
+      "title": "Authentication bypass"
+    },
+    {
+      "blocked": true,
+      "evidence": "foreign object returned as not-found",
+      "expected_control": "tenant_scoped_repository",
+      "framework_refs": [
+        "OWASP-API1"
+      ],
+      "id": "RT-002",
+      "severity": "critical",
+      "surface": "tenant",
+      "title": "Cross-tenant object access"
+    },
+    {
+      "blocked": true,
+      "evidence": "third same-window request denied",
+      "expected_control": "token_bucket_rate_limit",
+      "framework_refs": [
+        "OWASP-API4"
+      ],
+      "id": "RT-003",
+      "severity": "high",
+      "surface": "api",
+      "title": "API burst/resource abuse"
+    },
+    {
+      "blocked": true,
+      "evidence": "non_public_destination",
+      "expected_control": "public_https_only_ssrf_policy",
+      "framework_refs": [
+        "OWASP-API7"
+      ],
+      "id": "RT-004",
+      "severity": "critical",
+      "surface": "api",
+      "title": "SSRF metadata endpoint"
+    },
+    {
+      "blocked": true,
+      "evidence": "ignore\\s+(all\\s+)?previous\\s+instructions,reveal\\s+.*secret",
+      "expected_control": "prompt_injection_firewall",
+      "framework_refs": [
+        "OWASP-LLM01-2026"
+      ],
+      "id": "RT-005",
+      "severity": "high",
+      "surface": "rag",
+      "title": "Direct prompt injection"
+    },
+    {
+      "blocked": true,
+      "evidence": "call\\s+.*tool\\s+without\\s+approval,bypass\\s+.*approval",
+      "expected_control": "retrieved_content_is_untrusted",
+      "framework_refs": [
+        "OWASP-LLM01-2026"
+      ],
+      "id": "RT-006",
+      "severity": "high",
+      "surface": "rag",
+      "title": "Indirect retrieval prompt injection"
+    },
+    {
+      "blocked": true,
+      "evidence": "content_integrity_mismatch",
+      "expected_control": "signed_provenance_and_content_hash",
+      "framework_refs": [
+        "NIST-AI-100-2E2025",
+        "OWASP-LLM-DATA-POISONING"
+      ],
+      "id": "RT-007",
+      "severity": "critical",
+      "surface": "rag",
+      "title": "RAG knowledge poisoning"
+    },
+    {
+      "blocked": true,
+      "evidence": "mutating_tool_requires_approval",
+      "expected_control": "mcp_mutation_requires_approval",
+      "framework_refs": [
+        "OWASP-AGENTIC-2026",
+        "OWASP-LLM-EXCESSIVE-AGENCY"
+      ],
+      "id": "RT-008",
+      "severity": "critical",
+      "surface": "mcp",
+      "title": "Agent/MCP unauthorized mutation"
+    },
+    {
+      "blocked": true,
+      "evidence": "missing_capability:remediation:execute",
+      "expected_control": "capability_checked_tool_dispatch",
+      "framework_refs": [
+        "OWASP-API5",
+        "OWASP-AGENTIC-2026"
+      ],
+      "id": "RT-009",
+      "severity": "critical",
+      "surface": "agent",
+      "title": "Privilege escalation to remediation"
+    },
+    {
+      "blocked": true,
+      "evidence": "approval_already_consumed",
+      "expected_control": "single_use_plan_bound_approval",
+      "framework_refs": [
+        "OWASP-AGENTIC-2026"
+      ],
+      "id": "RT-010",
+      "severity": "critical",
+      "surface": "hitl",
+      "title": "HITL approval replay"
+    },
+    {
+      "blocked": true,
+      "evidence": "approval_plan_mismatch",
+      "expected_control": "approval_plan_fingerprint",
+      "framework_refs": [
+        "OWASP-AGENTIC-2026"
+      ],
+      "id": "RT-011",
+      "severity": "critical",
+      "surface": "hitl",
+      "title": "HITL plan substitution"
+    },
+    {
+      "blocked": true,
+      "evidence": "bearer_token,system_prompt",
+      "expected_control": "sensitive_output_guard",
+      "framework_refs": [
+        "OWASP-LLM-SENSITIVE-DISCLOSURE"
+      ],
+      "id": "RT-012",
+      "severity": "critical",
+      "surface": "data",
+      "title": "Sensitive-data exfiltration"
+    },
+    {
+      "blocked": true,
+      "evidence": "input_budget_exceeded",
+      "expected_control": "model_resource_budget",
+      "framework_refs": [
+        "OWASP-LLM-UNBOUNDED-CONSUMPTION"
+      ],
+      "id": "RT-013",
+      "severity": "high",
+      "surface": "resource",
+      "title": "Oversized model input"
+    },
+    {
+      "blocked": true,
+      "evidence": "tool_call_budget_exceeded",
+      "expected_control": "tool_call_budget",
+      "framework_refs": [
+        "OWASP-LLM-UNBOUNDED-CONSUMPTION",
+        "OWASP-AGENTIC-2026"
+      ],
+      "id": "RT-014",
+      "severity": "high",
+      "surface": "resource",
+      "title": "Agent tool-call exhaustion"
+    },
+    {
+      "blocked": true,
+      "evidence": "extension_denied",
+      "expected_control": "upload_allowlist_and_scanning_contract",
+      "framework_refs": [
+        "OWASP-LLM-SUPPLY-CHAIN"
+      ],
+      "id": "RT-015",
+      "severity": "high",
+      "surface": "file",
+      "title": "Malicious active-content upload"
+    },
+    {
+      "blocked": true,
+      "evidence": "archive_path_traversal",
+      "expected_control": "archive_member_path_validation",
+      "framework_refs": [
+        "CWE-22"
+      ],
+      "id": "RT-016",
+      "severity": "high",
+      "surface": "file",
+      "title": "Archive path traversal"
+    }
+  ],
+  "certificate": {
+    "attack_block_rate": 1.0,
+    "critical_failures": [],
+    "failures": [],
+    "fingerprint": "f990164d095b35978311f7df237696edc816460c5584a414e5f87600f2314023",
+    "high_failures": [],
+    "passed": true,
+    "warnings": [
+      "npm_lockfile_missing"
+    ]
+  },
+  "limitations": [
+    "Synthetic/local adversarial certification does not replace an authorized external penetration test.",
+    "No destructive payloads or attacks against third-party systems are executed.",
+    "Live IdP, PostgreSQL/Redis, vector store, model provider, MCP transport and Windows endpoints require staging validation.",
+    "Live dependency vulnerability/malware intelligence requires connected CI scanners and registry advisories."
+  ],
+  "release_stage": "security",
+  "scope": "production security, penetration, AI red-team and adversarial certification",
+  "supply_chain_findings": [
+    {
+      "code": "npm_lockfile_missing",
+      "detail": "generate and commit lockfile in connected CI",
+      "path": "frontend/package-lock.json",
+      "severity": "medium"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem}.metric-grid article{border:1px solid var(--line);border-radius:.7rem;padding:.8rem}.metric-value{font-size:1.8rem;font-weight:800;margin:.5rem 0}@media(max-width:800px){.metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:500px){.metric-grid{grid-template-columns:1fr}}

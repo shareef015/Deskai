@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "audit": {
+    "scope": "per_tenant_hash_chain",
+    "append_path": "database_security_definer_function",
+    "direct_runtime_insert_allowed": false,
+    "update_allowed": false,
+    "delete_allowed": false,
+    "sequence_monotonic": true,
+    "previous_hash_required_after_first_event": true,
+    "integrity_algorithm": "sha256",
+    "utc_timestamp_database_generated": true
+  },
+  "material_events": [
+    "authentication_security_failure",
+    "authorization_decision",
+    "consent_decision",
+    "approval_decision",
+    "diagnostic_dispatch",
+    "remediation_plan",
+    "remediation_execution",
+    "rollback_execution",
+    "verification_result",
+    "incident_closure",
+    "role_or_policy_change",
+    "evidence_access_or_export"
+  ],
+  "evidence_lineage": {
+    "append_only": true,
+    "parent_child_tenant_match_required": true,
+    "content_sha256_required": true,
+    "collector_and_tool_version_required": true,
+    "source_reference_required": true,
+    "transformation_record_required": true
+  },
+  "retention": {
+    "tenant_policy_required": true,
+    "default_audit_days": 365,
+    "legal_hold_overrides_expiry": true,
+    "expired_data_deleted_by_governed_worker_only": true,
+    "deletion_is_audited": true
+  },
+  "prohibited_payloads": ["secrets", "credentials", "private_keys", "raw_access_tokens", "hidden_reasoning", "unbounded_raw_telemetry"]
+}

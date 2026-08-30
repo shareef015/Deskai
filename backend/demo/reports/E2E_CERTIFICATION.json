@@ -1,0 +1,267 @@
+{
+  "certificate": {
+    "blockers": [],
+    "fingerprint": "a0ced648e33a0b5aec8234f3fb651e4cf67ae4fac745d4b23126ee19d2c8e3a4",
+    "gates": [
+      {
+        "fingerprint": "c7b054dc14e69e902aaec938c716a12aff650d05002ffee97a2d9d127d68ba1d",
+        "name": "observability_quality_llmops",
+        "passed": true,
+        "source": "backend/evals/QUALITY_CERTIFICATION_REPORT.json",
+        "warnings": []
+      },
+      {
+        "fingerprint": "40f525f73185ca31e69b1f5f9e2496a80d05c06956094f6ec8447a55f9701d2f",
+        "name": "performance_capacity",
+        "passed": true,
+        "source": "backend/evals/PERFORMANCE_CERTIFICATION.json",
+        "warnings": []
+      },
+      {
+        "fingerprint": "f990164d095b35978311f7df237696edc816460c5584a414e5f87600f2314023",
+        "name": "security_adversarial",
+        "passed": true,
+        "source": "backend/redteam/reports/SECURITY_CERTIFICATION.json",
+        "warnings": [
+          "npm_lockfile_missing"
+        ]
+      },
+      {
+        "fingerprint": null,
+        "name": "frontend_backend_contracts",
+        "passed": true,
+        "source": "e2e-static-contract-check",
+        "warnings": []
+      },
+      {
+        "fingerprint": null,
+        "name": "accessibility_contracts",
+        "passed": true,
+        "source": "accessibility-e2e-contract",
+        "warnings": []
+      },
+      {
+        "fingerprint": null,
+        "name": "failure_recovery",
+        "passed": true,
+        "source": "recovery-e2e-contract",
+        "warnings": []
+      }
+    ],
+    "passed": true,
+    "warnings": [
+      "npm_lockfile_missing"
+    ]
+  },
+  "kind": "synthetic-final-e2e-certification",
+  "limitations": [
+    "Synthetic recruiter-demo certification does not represent a live Windows endpoint or enterprise IdP run.",
+    "Accessibility and browser E2E are contract-gated here; full Playwright execution requires installed frontend dependencies.",
+    "Live MCP, vector store, PostgreSQL, Redis, model-provider and Kubernetes staging remain final deployment certification inputs."
+  ],
+  "personas": [
+    {
+      "capabilities": [
+        "demo:view"
+      ],
+      "display_name": "Recruiter Demo Viewer",
+      "persona_id": "recruiter-demo",
+      "role": "recruiter",
+      "synthetic": true,
+      "tenant_id": "tenant-a"
+    },
+    {
+      "capabilities": [
+        "ai:diagnose",
+        "demo:reset",
+        "remediation:approve",
+        "remediation:execute"
+      ],
+      "display_name": "Service Desk Engineer",
+      "persona_id": "service-desk-demo",
+      "role": "service_desk_engineer",
+      "synthetic": true,
+      "tenant_id": "tenant-a"
+    },
+    {
+      "capabilities": [
+        "ai:diagnose",
+        "remediation:approve",
+        "remediation:execute"
+      ],
+      "display_name": "Remediation Approver",
+      "persona_id": "approver-demo",
+      "role": "approver",
+      "synthetic": true,
+      "tenant_id": "tenant-a"
+    },
+    {
+      "capabilities": [
+        "ai:diagnose",
+        "demo:view"
+      ],
+      "display_name": "Security Reviewer",
+      "persona_id": "reviewer-demo",
+      "role": "reviewer",
+      "synthetic": true,
+      "tenant_id": "tenant-a"
+    }
+  ],
+  "release_stage": "end-to-end",
+  "reset": {
+    "after": "544faf2d283e530227ca49650da05209261f68c3c907e35c81d01911e9a39c1b",
+    "baseline": "544faf2d283e530227ca49650da05209261f68c3c907e35c81d01911e9a39c1b",
+    "before": "543680b830b80750be108b6dd3a3c8bf42f482c1235e34b889cc52cba8a38c26",
+    "restored": true
+  },
+  "scenarios": [
+    {
+      "action": "restart_spooler",
+      "approval_consumed": true,
+      "citation_count": 5,
+      "event_types": [
+        "incident_accepted",
+        "evidence_retrieved",
+        "citations_verified",
+        "agent_routed",
+        "diagnostic_completed",
+        "approval_required",
+        "approval_consumed",
+        "remediation_completed",
+        "verification_completed",
+        "incident_closed"
+      ],
+      "final_state": "closed",
+      "injection_blocked": true,
+      "notes": [],
+      "passed": true,
+      "route_domain": "printer",
+      "scenario_id": "DEMO-PRINTER-QUEUE",
+      "tenant_isolated": true,
+      "verification_ok": true
+    },
+    {
+      "action": "refresh_printer_connection",
+      "approval_consumed": true,
+      "citation_count": 5,
+      "event_types": [
+        "incident_accepted",
+        "evidence_retrieved",
+        "citations_verified",
+        "agent_routed",
+        "diagnostic_completed",
+        "approval_required",
+        "approval_consumed",
+        "remediation_completed",
+        "verification_completed",
+        "incident_closed"
+      ],
+      "final_state": "closed",
+      "injection_blocked": true,
+      "notes": [],
+      "passed": true,
+      "route_domain": "printer",
+      "scenario_id": "DEMO-PRINTER-OFFLINE",
+      "tenant_isolated": true,
+      "verification_ok": true
+    },
+    {
+      "action": "refresh_outlook_sync",
+      "approval_consumed": true,
+      "citation_count": 5,
+      "event_types": [
+        "incident_accepted",
+        "evidence_retrieved",
+        "citations_verified",
+        "agent_routed",
+        "diagnostic_completed",
+        "approval_required",
+        "approval_consumed",
+        "remediation_completed",
+        "verification_completed",
+        "incident_closed"
+      ],
+      "final_state": "closed",
+      "injection_blocked": true,
+      "notes": [],
+      "passed": true,
+      "route_domain": "outlook",
+      "scenario_id": "DEMO-OUTLOOK-DISCONNECTED",
+      "tenant_isolated": true,
+      "verification_ok": true
+    },
+    {
+      "action": "restart_outlook",
+      "approval_consumed": true,
+      "citation_count": 5,
+      "event_types": [
+        "incident_accepted",
+        "evidence_retrieved",
+        "citations_verified",
+        "agent_routed",
+        "diagnostic_completed",
+        "approval_required",
+        "approval_consumed",
+        "remediation_completed",
+        "verification_completed",
+        "incident_closed"
+      ],
+      "final_state": "closed",
+      "injection_blocked": true,
+      "notes": [],
+      "passed": true,
+      "route_domain": "outlook",
+      "scenario_id": "DEMO-OUTLOOK-CRASH",
+      "tenant_isolated": true,
+      "verification_ok": true
+    },
+    {
+      "action": "restart_spooler",
+      "approval_consumed": true,
+      "citation_count": 5,
+      "event_types": [
+        "incident_accepted",
+        "evidence_retrieved",
+        "citations_verified",
+        "agent_routed",
+        "diagnostic_completed",
+        "approval_required",
+        "approval_consumed",
+        "remediation_completed",
+        "verification_completed",
+        "verification_failed_retriage_required"
+      ],
+      "final_state": "diagnosing",
+      "injection_blocked": true,
+      "notes": [],
+      "passed": true,
+      "route_domain": "printer",
+      "scenario_id": "DEMO-VERIFY-FAIL",
+      "tenant_isolated": true,
+      "verification_ok": false
+    },
+    {
+      "action": null,
+      "approval_consumed": false,
+      "citation_count": 0,
+      "event_types": [],
+      "final_state": "denied",
+      "injection_blocked": true,
+      "notes": [
+        "cross_tenant_context_denied_before_retrieval"
+      ],
+      "passed": true,
+      "route_domain": "printer",
+      "scenario_id": "DEMO-CROSS-TENANT",
+      "tenant_isolated": true,
+      "verification_ok": null
+    }
+  ],
+  "schema_version": 1,
+  "service_desk_script": {
+    "closure_message": "Verification passed and the incident is ready for closure.",
+    "greeting": "Hi, good day. Welcome to DeskPilot AI Service Desk.",
+    "intake_question": "How can I help you today?",
+    "permission_prompt": "May I run diagnostics on the affected Windows device and request approval before any remediation?"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0.0",
+  "decision_model": "deny_by_default",
+  "deny_overrides_allow": true,
+  "authoritative_assignments": "postgresql_role_assignments",
+  "token_roles_are_authorization_hints_only": true,
+  "assignment_scopes": ["tenant", "department", "location", "device", "incident"],
+  "roles": {
+    "employee": {
+      "allow": ["incident.create", "incident.read_own", "consent.manage_own", "resolution.confirm_own"],
+      "deny": ["incident.read_other", "remediation.approve_medium_high", "endpoint.execute"]
+    },
+    "service_desk_engineer": {
+      "allow": ["incident.read_assigned", "incident.update_assigned", "diagnostic.execute_authorized", "remediation.propose", "remediation.execute_low_authorized"],
+      "deny": ["remediation.approve_own", "security_policy.modify", "audit.modify"]
+    },
+    "l2_l3_specialist": {
+      "allow": ["incident.read_escalated", "incident.update_escalated", "diagnostic.execute_advanced_authorized", "remediation.propose", "remediation.execute_medium_authorized"],
+      "deny": ["remediation.approve_own", "audit.modify"]
+    },
+    "remediation_approver": {
+      "allow": ["remediation.review_medium", "remediation.approve_medium", "remediation.reject_medium"],
+      "deny": ["remediation.approve_own", "endpoint.execute", "audit.modify"]
+    },
+    "endpoint_administrator": {
+      "allow": ["endpoint.change_review", "endpoint.change_approve", "endpoint.change_execute", "rollback.execute"],
+      "deny": ["audit.modify", "cross_tenant.access"]
+    },
+    "tenant_administrator": {
+      "allow": ["tenant.configure", "role_assignment.manage", "policy.publish", "audit.export"],
+      "deny": ["audit.modify", "cross_tenant.access"]
+    },
+    "auditor": {
+      "allow": ["audit.read", "audit.export", "policy.read", "approval.read"],
+      "deny": ["incident.modify", "approval.decide", "endpoint.execute", "policy.publish"]
+    }
+  },
+  "segregation_of_duties": [
+    "proposer_cannot_be_sole_approver",
+    "requester_cannot_approve_medium_or_high_risk_change",
+    "auditor_cannot_hold_mutating_role_in_same_scope",
+    "role_assignment_change_requires_independent_audit_event",
+    "ai_identity_cannot_receive_human_approval_role"
+  ],
+  "decision_record": ["tenant_id", "actor_id", "action", "resource_type", "resource_id", "matched_assignment_ids", "policy_version", "outcome", "reason_code", "correlation_id", "decided_at"]
+}

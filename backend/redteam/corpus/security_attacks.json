@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "purpose": "Synthetic, non-destructive adversarial regression corpus for DeskPilot AI Security.",
+  "cases": [
+    {"id":"RT-001","surface":"identity","class":"authentication-bypass","severity":"critical"},
+    {"id":"RT-002","surface":"tenant","class":"bola-tenant-escape","severity":"critical"},
+    {"id":"RT-003","surface":"api","class":"resource-consumption","severity":"high"},
+    {"id":"RT-004","surface":"api","class":"ssrf-metadata","severity":"critical"},
+    {"id":"RT-005","surface":"rag","class":"direct-prompt-injection","severity":"high"},
+    {"id":"RT-006","surface":"rag","class":"indirect-prompt-injection","severity":"high"},
+    {"id":"RT-007","surface":"rag","class":"knowledge-poisoning","severity":"critical"},
+    {"id":"RT-008","surface":"mcp","class":"excessive-agency","severity":"critical"},
+    {"id":"RT-009","surface":"agent","class":"privilege-escalation","severity":"critical"},
+    {"id":"RT-010","surface":"hitl","class":"approval-replay","severity":"critical"},
+    {"id":"RT-011","surface":"hitl","class":"plan-substitution","severity":"critical"},
+    {"id":"RT-012","surface":"data","class":"sensitive-disclosure","severity":"critical"},
+    {"id":"RT-013","surface":"resource","class":"oversized-model-input","severity":"high"},
+    {"id":"RT-014","surface":"resource","class":"agent-tool-loop-dos","severity":"high"},
+    {"id":"RT-015","surface":"file","class":"active-content-upload","severity":"high"},
+    {"id":"RT-016","surface":"file","class":"archive-path-traversal","severity":"high"}
+  ]
+}

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: deskpilot-config
+  namespace: deskpilot-production
+data:
+  DESKPILOT_ENV: production
+  DESKPILOT_DEMO_MODE: "false"
+  DESKPILOT_LOG_LEVEL: INFO
+  DESKPILOT_OTEL_SERVICE_NAMESPACE: deskpilot

@@ -1,0 +1,27 @@
+name: Backend API Security Gate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  backend-api-security:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deterministic test dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements-test.txt
+      - name: Compile backend packages
+        run: python -m compileall -q src
+      - name: Identity + backend/API attack regression suite
+        run: python -m unittest discover -s tests -v
+      - name: Reject Python bytecode or local secrets in repository
+        run: |
+          ! find . -type f \( -name '*.pyc' -o -name '.env' -o -name '.env.*' \) -print | grep .

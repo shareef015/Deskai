@@ -1,0 +1,1 @@
+{"version":"1.0.0","stages":["intake","clarify_device","clarify_symptom","remote_permission","ui_diagnostics","change_approval","ui_repair","technical_verification","employee_confirmation","resolved"],"remote_capabilities":["view_screen","control_pointer","use_support_ui"],"unattended_access":false,"employee_can_revoke":true,"maximum_questions_per_turn":2}

@@ -1,0 +1,16 @@
+{
+  "title": "DeskPilot AI - Performance & Capacity",
+  "schemaVersion": 39,
+  "tags": ["deskpilot", "performance", "performance"],
+  "panels": [
+    {"type": "timeseries", "title": "API p50/p95/p99 latency", "targets": []},
+    {"type": "timeseries", "title": "RAG / LangGraph / LLM / MCP latency", "targets": []},
+    {"type": "timeseries", "title": "Concurrent incidents and queue age", "targets": []},
+    {"type": "timeseries", "title": "SSE / WebSocket active connections", "targets": []},
+    {"type": "timeseries", "title": "PostgreSQL / Redis pool utilization", "targets": []},
+    {"type": "timeseries", "title": "MCP worker utilization", "targets": []},
+    {"type": "timeseries", "title": "Cache hit ratio and avoided compute", "targets": []},
+    {"type": "timeseries", "title": "Tenant fairness index", "targets": []},
+    {"type": "timeseries", "title": "CPU / memory / process RSS", "targets": []}
+  ]
+}

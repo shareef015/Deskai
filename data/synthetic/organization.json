@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0.0",
+  "synthetic_only": true,
+  "seed": 41001,
+  "tenant": {"id": "tenant-demo-kw", "organization_id": "org-northstar-demo", "name": "Northstar Demo Services", "country": "KW", "timezone": "Asia/Kuwait"},
+  "locations": [
+    {"id": "loc-hq", "code": "KWI-HQ", "name": "Northstar Head Office", "type": "head_office", "city": "Kuwait City", "country": "KW", "timezone": "Asia/Kuwait"},
+    {"id": "loc-branch", "code": "KWI-BR1", "name": "Northstar Service Branch", "type": "branch", "city": "Hawally", "country": "KW", "timezone": "Asia/Kuwait"},
+    {"id": "loc-warehouse", "code": "KWI-WH1", "name": "Northstar Distribution Center", "type": "warehouse", "city": "Al Farwaniyah", "country": "KW", "timezone": "Asia/Kuwait"}
+  ],
+  "departments": [
+    {"id":"dept-executive","name":"Executive","parent_id":null,"location_ids":["loc-hq"]},
+    {"id":"dept-finance","name":"Finance","parent_id":"dept-executive","location_ids":["loc-hq"]},
+    {"id":"dept-operations","name":"Operations","parent_id":"dept-executive","location_ids":["loc-hq","loc-branch","loc-warehouse"]},
+    {"id":"dept-human-resources","name":"Human Resources","parent_id":"dept-executive","location_ids":["loc-hq"]},
+    {"id":"dept-sales","name":"Sales","parent_id":"dept-executive","location_ids":["loc-hq","loc-branch"]},
+    {"id":"dept-legal","name":"Legal","parent_id":"dept-executive","location_ids":["loc-hq"]},
+    {"id":"dept-facilities","name":"Facilities","parent_id":"dept-operations","location_ids":["loc-hq","loc-branch"]},
+    {"id":"dept-procurement","name":"Procurement","parent_id":"dept-operations","location_ids":["loc-hq","loc-warehouse"]},
+    {"id":"dept-customer-care","name":"Customer Care","parent_id":"dept-operations","location_ids":["loc-branch"]},
+    {"id":"dept-marketing","name":"Marketing","parent_id":"dept-sales","location_ids":["loc-hq"]},
+    {"id":"dept-warehouse","name":"Warehouse","parent_id":"dept-operations","location_ids":["loc-warehouse"]},
+    {"id":"dept-it-support","name":"IT Support","parent_id":"dept-operations","location_ids":["loc-hq","loc-branch","loc-warehouse"]},
+    {"id":"dept-it-engineering","name":"IT Engineering","parent_id":"dept-operations","location_ids":["loc-hq"]},
+    {"id":"dept-change-control","name":"Change Control","parent_id":"dept-executive","location_ids":["loc-hq"]},
+    {"id":"dept-endpoint-engineering","name":"Endpoint Engineering","parent_id":"dept-it-engineering","location_ids":["loc-hq"]},
+    {"id":"dept-network-engineering","name":"Network Engineering","parent_id":"dept-it-engineering","location_ids":["loc-hq"]},
+    {"id":"dept-identity-messaging","name":"Identity and Messaging","parent_id":"dept-it-engineering","location_ids":["loc-hq"]},
+    {"id":"dept-cybersecurity","name":"Cybersecurity","parent_id":"dept-executive","location_ids":["loc-hq"]},
+    {"id":"dept-platform-administration","name":"Platform Administration","parent_id":"dept-it-engineering","location_ids":["loc-hq"]},
+    {"id":"dept-internal-audit","name":"Internal Audit","parent_id":"dept-executive","location_ids":["loc-hq"]}
+  ],
+  "support_groups": [
+    {"id":"service-desk","name":"Service Desk","department_id":"dept-it-support","domains":["outlook","printer","scanner","windows_network"],"level":1},
+    {"id":"endpoint-engineering","name":"Endpoint Engineering","department_id":"dept-endpoint-engineering","domains":["windows","printer","scanner"],"level":2},
+    {"id":"network-engineering","name":"Network Engineering","department_id":"dept-network-engineering","domains":["dns","vpn","proxy","connectivity"],"level":2},
+    {"id":"identity-messaging","name":"Identity and Messaging","department_id":"dept-identity-messaging","domains":["outlook","authentication"],"level":2},
+    {"id":"cybersecurity","name":"Cybersecurity","department_id":"dept-cybersecurity","domains":["security","policy_exception"],"level":3}
+  ]
+}

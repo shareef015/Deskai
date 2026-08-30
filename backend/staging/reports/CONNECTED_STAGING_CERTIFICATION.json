@@ -1,0 +1,44 @@
+{
+  "certificate": {
+    "blockers": [
+      "not_run:authorized_pentest",
+      "not_run:autoscaling",
+      "not_run:backup_restore",
+      "not_run:failover_dr",
+      "not_run:langsmith_export",
+      "not_run:load_soak",
+      "not_run:mcp_transport",
+      "not_run:migrations",
+      "not_run:model_routing",
+      "not_run:oidc_real_login",
+      "not_run:otel_export",
+      "not_run:postgres_rls",
+      "not_run:redis_live",
+      "not_run:rollback",
+      "not_run:rolling_deploy",
+      "not_run:secrets_kms",
+      "not_run:sse_streaming",
+      "not_run:vector_retrieval",
+      "not_run:websocket_streaming",
+      "not_run:windows_outlook",
+      "not_run:windows_printer"
+    ],
+    "controls_not_run": 21,
+    "controls_passed": 0,
+    "controls_total": 21,
+    "decision": "ready_for_connected_staging",
+    "fingerprint": "0c221aeb1824997f5b880fd84ed4e585ee37fc674a31548bf97f478ddebd5ee3",
+    "metadata": {
+      "environment": "staging",
+      "kind": "connected-staging-release-candidate-certification",
+      "release_stage": "staging"
+    },
+    "passed": false,
+    "prior_e2e_passed": true,
+    "warnings": []
+  },
+  "evidence": [],
+  "kind": "connected-staging-release-candidate-certification",
+  "release_stage": "staging",
+  "schema_version": 1
+}

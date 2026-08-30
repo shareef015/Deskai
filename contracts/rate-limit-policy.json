@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "algorithm": "redis_atomic_multi_bucket_token_bucket",
+  "dimensions": {
+    "tenant": {"capacity": 600, "refill_per_second": 10},
+    "user": {"capacity": 120, "refill_per_second": 2},
+    "network": {"capacity": 180, "refill_per_second": 3}
+  },
+  "costs": {"health": 0, "read": 1, "write": 2, "lifecycle_transition": 5, "stream_open": 2, "diagnostic_dispatch": 10, "remediation_dispatch": 25},
+  "identity": {"tenant_from_verified_claim": true, "user_subject_hmac": true, "network_address_hmac": true, "forwarded_address_trusted_only_from_allowlisted_proxy": true, "raw_identity_in_key_or_log_prohibited": true},
+  "atomicity": {"all_dimensions_checked_before_decrement": true, "redis_server_time": true, "partial_bucket_consumption_prohibited": true},
+  "response": {"status": 429, "retry_after_required": true, "headers": ["RateLimit-Limit", "RateLimit-Remaining", "RateLimit-Reset"], "cache_control": "no-store"},
+  "failure": {"authenticated_mutation": "fail_closed_503", "authentication_endpoint": "fail_closed_503", "health_endpoint": "bypass", "silent_local_fallback_prohibited": true},
+  "operations": {"policy_versioned": true, "per_tenant_override_requires_approval": true, "cardinality_monitoring_required": true, "hot_key_alerting_required": true}
+}
